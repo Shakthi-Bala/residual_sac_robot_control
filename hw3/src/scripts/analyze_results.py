@@ -168,7 +168,7 @@ def summarize(runs):
             summary[key]['temperature_tail_range'] = [min(tail), max(tail)]
         columns = ['step', 'Eval_AverageReturn', 'Eval_StdReturn', 'Train_EpisodeReturn', 'q_values', 'temperature', 'entropy']
         with (curves / f'{name}.csv').open('w') as stream:
-            writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore')
+            writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore', lineterminator='\n')
             writer.writeheader()
             writer.writerows(run['rows'])
     (RESULTS / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
