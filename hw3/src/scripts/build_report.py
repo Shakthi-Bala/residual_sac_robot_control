@@ -160,6 +160,15 @@ def main():
     styles['BodyText'].fontSize = 10
     styles['BodyText'].leading = 14
     story = [Paragraph('HW3: Q-Learning and Actor-Critic Algorithms', styles['Title']), Spacer(1, .2 * inch)]
+    captions = {
+        'cartpole': 'Evaluation mean over 10 episodes versus environment steps; basic DQN.',
+        'lunarlander': 'Double-DQN evaluation mean over 10 episodes; default LunarLander configuration.',
+        'mspacman': 'Raw game returns: evaluation mean over 10 episodes and trailing 20-episode training mean. Training includes epsilon-greedy exploration.',
+        'lunarlander_sweep': 'Target-copy frequency was chosen because it controls the speed/stability tradeoff of bootstrap targets. Four periods are compared with all other configuration values fixed.',
+        'invertedpendulum': 'Full SAC sanity-check curves with fixed and automatically tuned temperature.',
+        'halfcheetah_temperature': 'Top: fixed versus automatic temperature evaluation means. Bottom: learned temperature from the automatic run.',
+        'hopper_critics': 'Top: evaluation means for single and clipped double Q. Bottom: logged mean current Q-values on replay batches; these are diagnostics, not direct estimates of bias.',
+    }
     for title, paragraphs, figure in content:
         markdown.extend(['## ' + title, ''])
         story.append(Paragraph(escape(title), styles['Heading2']))
@@ -172,6 +181,9 @@ def main():
             from PIL import Image as PILImage
             width, height = PILImage.open(image).size
             story.append(Image(str(image), width=6.5 * inch, height=6.5 * inch * height / width))
+            caption = captions[figure]
+            markdown.extend(['*' + caption + '*', ''])
+            story.append(Paragraph(escape(caption), styles['Italic']))
             story.append(Spacer(1, .15 * inch))
     Path('results/report.md').write_text('\n'.join(markdown))
     def footer(canvas, doc):
