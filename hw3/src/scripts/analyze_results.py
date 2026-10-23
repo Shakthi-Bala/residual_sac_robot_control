@@ -156,6 +156,12 @@ def summarize(runs):
             summary[key]['peak_q_values'] = max(q_values)
         temperature = [float(r['temperature']) for r in run['rows'] if r.get('temperature')]
         if temperature:
+            temperature_rows = [r for r in run['rows'] if r.get('temperature')]
+            minimum_row = min(temperature_rows, key=lambda row: float(row['temperature']))
+            summary[key]['minimum_temperature'] = float(minimum_row['temperature'])
+            summary[key]['minimum_temperature_step'] = int(minimum_row['step'])
+            summary[key]['initial_logged_entropy'] = float(temperature_rows[0]['entropy'])
+            summary[key]['final_entropy'] = float(temperature_rows[-1]['entropy'])
             summary[key]['initial_logged_temperature'] = temperature[0]
             summary[key]['final_temperature'] = temperature[-1]
             tail = temperature[-max(2, len(temperature) // 10):]

@@ -1,9 +1,0 @@
-{
-  "log_directory": "exp/CartPole-v1_dqn_sd1_20261023_011301",
-  "training_steps": 100000,
-  "evaluation_episodes": 10,
-  "best_eval_mean": 500.0,
-  "last_eval_step": 97500,
-  "last_eval_mean": 136.6,
-  "note": "One run; environment reset RNG was not explicitly seeded by the starter loop. Final evaluation at step 97500."
-}

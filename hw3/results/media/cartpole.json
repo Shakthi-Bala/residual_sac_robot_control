@@ -1,0 +1,8 @@
+{
+  "run": "exp/CartPole-v1_dqn_sd1_20261023_061800",
+  "checkpoint": "best_agent.pt",
+  "seed": 10001,
+  "steps": 500,
+  "return": 500.0,
+  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+}

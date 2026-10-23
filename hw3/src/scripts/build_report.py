@@ -4,7 +4,7 @@ from xml.sax.saxutils import escape
 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, KeepTogether
 
 from scripts.analyze_results import load_runs, plot_results, summarize
 
@@ -57,9 +57,9 @@ def sections(summary):
         ('3.4-3.5 HalfCheetah: fixed and learned temperature', [
             'Fixed temperature: ' + result('sac:HalfCheetah-v4') + '. Automatic temperature: ' + result('sac_autotune:HalfCheetah-v4') + '.',
             f"Automatic tuning produced a {'higher' if auto['final_eval_mean'] > fixed['final_eval_mean'] else 'lower'} final evaluation mean in this run. Its final mean differs from the fixed run by {auto['final_eval_mean'] - fixed['final_eval_mean']:+.1f}; its best mean differs by {auto['best_eval_mean'] - fixed['best_eval_mean']:+.1f}. This comparison describes the observed run, not a statistically established improvement.",
-            f"Temperature {direction} from the first logged value {auto['initial_logged_temperature']:.4f} to {auto['final_temperature']:.4f}. The implementation learns log(alpha), starts alpha at 0.1, and uses target entropy -6 for HalfCheetah's six actions. Its loss is -mean(log(alpha) * stop_gradient(log pi + target_entropy)).",
+            f"Temperature first fell to {auto['minimum_temperature']:.4f} near step {auto['minimum_temperature_step']}, then recovered. Overall it {direction} from the first logged value {auto['initial_logged_temperature']:.4f} to {auto['final_temperature']:.4f}. The implementation learns log(alpha), starts alpha at 0.1, and uses target entropy -6 for HalfCheetah's six actions. Its loss is -mean(log(alpha) * stop_gradient(log pi + target_entropy)).",
             f"Across the final 10% of logged updates, temperature ranged from {auto['temperature_tail_range'][0]:.4f} to {auto['temperature_tail_range'][1]:.4f}; temperature {temperature_trend} near the end.",
-            'When sampled policy entropy exceeds the target, this update reduces temperature; when entropy is below target, it increases temperature. HalfCheetah can benefit from increasingly precise actions as useful locomotion is learned, while the constraint still discourages excessive loss of entropy. Temperature reflects the entropy residual and evolving policy, not return directly. A fixed value of 0.1 is already tuned in the starter, so automatic tuning need not outperform it.',
+            f"Initial logged entropy was {auto['initial_logged_entropy']:.2f}, compared with target -6; final logged entropy was {auto['final_entropy']:.2f}. Early diffuse actions exceed the target entropy, so the dual update reduces temperature. As reward learning concentrates the policy around useful locomotion actions, entropy can fall below the constraint and temperature increases to counter further loss of exploration. This explains the observed dip and recovery; temperature responds to the entropy residual, not return directly. A fixed value of 0.1 is already tuned in the starter, so automatic tuning need not outperform it.",
             'The optional fixed-temperature sweep was not run; the required fixed-versus-automatic comparison is shown below.',
         ], 'halfcheetah_temperature'),
         ('3.6 Hopper: single Q and clipped double Q', [
@@ -175,7 +175,8 @@ def main():
     markdown = ['# HW3: Q-Learning and Actor-Critic Algorithms', '']
     styles = getSampleStyleSheet()
     styles['BodyText'].fontSize = 10
-    styles['BodyText'].leading = 14
+    styles['BodyText'].leading = 13
+    styles['Heading2'].keepWithNext = True
     story = [Paragraph('HW3: Q-Learning and Actor-Critic Algorithms', styles['Title']), Spacer(1, .2 * inch)]
     captions = {
         'cartpole': 'Evaluation mean over 10 episodes versus environment steps; basic DQN.',
@@ -191,17 +192,19 @@ def main():
         story.append(Paragraph(escape(title), styles['Heading2']))
         for text in paragraphs:
             markdown.extend([text, ''])
-            story.extend([Paragraph(escape(text), styles['BodyText']), Spacer(1, .1 * inch)])
+            story.extend([Paragraph(escape(text), styles['BodyText']), Spacer(1, .06 * inch)])
         if figure:
             image = Path('results') / (figure + '.png')
             markdown.extend([f'![{title}]({figure}.png)', ''])
             from PIL import Image as PILImage
             width, height = PILImage.open(image).size
-            story.append(Image(str(image), width=6.5 * inch, height=6.5 * inch * height / width))
             caption = captions[figure]
             markdown.extend(['*' + caption + '*', ''])
-            story.append(Paragraph(escape(caption), styles['Italic']))
-            story.append(Spacer(1, .15 * inch))
+            story.append(KeepTogether([
+                Image(str(image), width=6.3 * inch, height=6.3 * inch * height / width),
+                Paragraph(escape(caption), styles['Italic']),
+                Spacer(1, .1 * inch),
+            ]))
     Path('results/report.md').write_text('\n'.join(markdown))
     def footer(canvas, doc):
         canvas.setFont('Helvetica', 8)
