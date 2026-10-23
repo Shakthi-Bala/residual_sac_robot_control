@@ -57,7 +57,7 @@ def sections(summary):
             'The optional fixed-temperature sweep was not run; the required fixed-versus-automatic comparison is shown below.',
         ], 'halfcheetah_temperature'),
         ('3.6 Hopper: single Q and clipped double Q', [
-            'Single Q: ' + result('sac_singleq:Hopper-v4') + '. Clipped double Q: ' + result('sac_clipq:Hopper-v4') + '.',
+            'Single Q: ' + result('sac_singleq:Hopper-v4') + '. Clipped double Q: ' + result('sac_clipq:Hopper-v4') + f". The clipped run's highest individual evaluation episode returned {clipped['best_eval_episode']:.1f}; the assignment asks for at least 1500 at least once.",
             f"Clipped double Q changes the final mean by {clipped['final_eval_mean'] - single['final_eval_mean']:+.1f} and the best mean by {clipped['best_eval_mean'] - single['best_eval_mean']:+.1f} relative to single Q in these runs.",
             f"Final logged mean Q-values were {single['final_q_values']:.1f} for single Q and {clipped['final_q_values']:.1f} for clipped double Q. Peak logged means were {single['peak_q_values']:.1f} and {clipped['peak_q_values']:.1f}, respectively. These measured scales should be read together with the return curves below.",
             'Taking the smaller of two target critics counters optimistic errors that can compound under bootstrapping. The lower panel plots the mean current Q-value on sampled replay batches. Comparing Q-values with learning stability helps diagnose overestimation, but these values are not a direct measurement of bias: they include entropy-related value, depend on the state distribution, and are not paired with ground-truth returns from identical state-action pairs.',
