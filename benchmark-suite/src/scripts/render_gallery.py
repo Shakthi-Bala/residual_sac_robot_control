@@ -22,7 +22,7 @@ DEMOS = [
 ]
 
 
-def gallery_markdown(prefix='hw3/results/media/'):
+def gallery_markdown(prefix='benchmark-suite/results/media/'):
     lines = [
         '## Policy demonstrations', '',
         'Every trained configuration is shown below using its best checkpoint and visualization seed 10001. These individual rollouts illustrate behavior; evaluation averages are reported separately. Each GIF has a JSON file recording its checkpoint, seed, length, and return.', '',
