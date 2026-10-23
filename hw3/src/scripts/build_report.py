@@ -58,7 +58,7 @@ def sections(summary):
         ], 'halfcheetah_temperature'),
         ('3.6 Hopper: single Q and clipped double Q', [
             'Single Q: ' + result('sac_singleq:Hopper-v4') + '. Clipped double Q: ' + result('sac_clipq:Hopper-v4') + f". The clipped run's highest individual evaluation episode returned {clipped['best_eval_episode']:.1f}; the assignment asks for at least 1500 at least once.",
-            f"Clipped double Q changes the final mean by {clipped['final_eval_mean'] - single['final_eval_mean']:+.1f} and the best mean by {clipped['best_eval_mean'] - single['best_eval_mean']:+.1f} relative to single Q in these runs.",
+            f"{'Clipped double Q' if clipped['final_eval_mean'] > single['final_eval_mean'] else 'Single Q'} has the higher final mean in this comparison. Clipped double Q changes the final mean by {clipped['final_eval_mean'] - single['final_eval_mean']:+.1f} and the best mean by {clipped['best_eval_mean'] - single['best_eval_mean']:+.1f} relative to single Q in these runs.",
             f"Final logged mean Q-values were {single['final_q_values']:.1f} for single Q and {clipped['final_q_values']:.1f} for clipped double Q. Peak logged means were {single['peak_q_values']:.1f} and {clipped['peak_q_values']:.1f}, respectively. These measured scales should be read together with the return curves below.",
             'Taking the smaller of two target critics counters optimistic errors that can compound under bootstrapping. The lower panel plots the mean current Q-value on sampled replay batches. Comparing Q-values with learning stability helps diagnose overestimation, but these values are not a direct measurement of bias: they include entropy-related value, depend on the state distribution, and are not paired with ground-truth returns from identical state-action pairs.',
         ], 'hopper_critics'),
@@ -72,7 +72,13 @@ def sections(summary):
 
 def write_readme(summary):
     entries = [('CartPole-v1', 'dqn'), ('LunarLander-v2', 'dqn'), ('MsPacmanNoFrameskip-v4', 'dqn'), ('HalfCheetah-v4', 'sac'), ('HalfCheetah-v4', 'sac_autotune'), ('Hopper-v4', 'sac_singleq'), ('Hopper-v4', 'sac_clipq')]
-    table = '\n'.join(f"| {environment.replace('NoFrameskip-v4', '')} | {name} | {summary[name + ':' + environment]['best_eval_mean']:.1f} | {summary[name + ':' + environment]['final_eval_mean']:.1f} |" for environment, name in entries)
+    labels = {'sac': 'SAC, fixed temperature', 'sac_autotune': 'SAC, learned temperature', 'sac_singleq': 'SAC, single Q', 'sac_clipq': 'SAC, clipped double Q'}
+    table_rows = []
+    for environment, name in entries:
+        run = summary[name + ':' + environment]
+        label = labels.get(name, 'Double DQN' if run['config'].get('use_double_q') else 'DQN')
+        table_rows.append(f"| {environment.replace('NoFrameskip-v4', '')} | {label} | {run['best_eval_mean']:.1f} | {run['final_eval_mean']:.1f} |")
+    table = '\n'.join(table_rows)
     text = '''# Deep Reinforcement Learning for Discrete and Continuous Control
 
 DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks. This project completes the Berkeley CS185/285 Spring 2026 HW3 starter and studies how target updates, entropy temperature, and critic ensembles affect learning.
