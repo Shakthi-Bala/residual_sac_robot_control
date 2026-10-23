@@ -41,7 +41,7 @@ def sample_trajectory(
 
         # Rollout can end due to done, or due to max_length
         steps += 1
-        rollout_done = done or steps > max_length
+        rollout_done = done or steps >= max_length
 
         # record result of taking that action
         obs.append(ob)

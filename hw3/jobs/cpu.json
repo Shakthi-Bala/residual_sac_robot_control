@@ -1,0 +1,39 @@
+[
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/cartpole.yaml",
+    "args": [
+      "--no_gpu",
+      "--eval_interval",
+      "2500"
+    ]
+  },
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/lunarlander.yaml",
+    "args": [
+      "--no_gpu"
+    ]
+  },
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/lunarlander_target250.yaml",
+    "args": [
+      "--no_gpu"
+    ]
+  },
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/lunarlander_target500.yaml",
+    "args": [
+      "--no_gpu"
+    ]
+  },
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/lunarlander_target2000.yaml",
+    "args": [
+      "--no_gpu"
+    ]
+  }
+]

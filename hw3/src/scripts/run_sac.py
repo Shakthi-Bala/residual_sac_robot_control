@@ -2,6 +2,9 @@ import os
 import time
 import yaml
 import argparse
+import json
+import subprocess
+import wandb
 
 from agents.sac_agent import SoftActorCritic
 from configs import sac_config
@@ -27,6 +30,9 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
     env = config["make_env"]()
     eval_env = config["make_env"](eval=True)
     render_env = config["make_env"](eval=True, render=True)
+    for offset, environment in enumerate((env, eval_env, render_env)):
+        environment.seed(args.seed + 10000 * offset)
+        environment.action_space.seed(args.seed + 10000 * offset)
 
     ep_len = config["ep_len"] or env.spec.max_episode_steps
 
@@ -57,13 +63,12 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
 
     observation = env.reset()
 
-    for step in tqdm.trange(config["total_steps"], dynamic_ncols=True):
+    best_return = -float("inf")
+    for step in tqdm.trange(config["total_steps"], dynamic_ncols=True, mininterval=10):
         if step < config["random_steps"]:
             action = env.action_space.sample()
         else:
-            # TODO(Section 3.1): Select an action
-            action = None
-            # ENDTODO
+            action = agent.get_action(observation)
 
         # Step the environment and add the data to the replay buffer
         next_observation, reward, done, info = env.step(action)
@@ -86,10 +91,15 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
 
         # Train the agent
         if step >= config["training_starts"]:
-            # TODO(Section 3.1): Sample a batch of config["batch_size"] transitions from the replay buffer
-            batch = None
-            update_info = None
-            # ENDTODO
+            batch = ptu.from_numpy(replay_buffer.sample(config["batch_size"]))
+            update_info = agent.update(
+                observations=batch["observations"],
+                actions=batch["actions"],
+                rewards=batch["rewards"],
+                next_observations=batch["next_observations"],
+                dones=batch["dones"],
+                step=step,
+            )
 
             # Logging
             if step % args.log_interval == 0:
@@ -97,7 +107,7 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
                     logger.log(update_info, step)
 
         # Run evaluation
-        if step % args.eval_interval == 0:
+        if step % args.eval_interval == 0 or step == config["total_steps"] - 1:
             # Evaluate
             trajectories = utils.sample_n_trajectories(
                 eval_env,
@@ -120,6 +130,9 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
             if step >= config["training_starts"]:
                 eval_metrics.update(update_info)
             logger.log(eval_metrics, step)
+            if eval_metrics["Eval_AverageReturn"] > best_return:
+                best_return = eval_metrics["Eval_AverageReturn"]
+                torch.save(agent.state_dict(), os.path.join(os.path.dirname(logger.path), "best_agent.pt"))
 
             if args.num_render_trajectories > 0:
                 video_trajectories = utils.sample_n_trajectories(
@@ -142,6 +155,9 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
             dump_log(agent, logger, args, os.path.dirname(logger.path))
 
     dump_log(agent, logger, args, os.path.dirname(logger.path))
+    env.close()
+    eval_env.close()
+    render_env.close()
 
 
 def make_config(config_file: str) -> dict:
@@ -166,10 +182,20 @@ def make_logger(config: dict, args: argparse.Namespace) -> Logger:
         project=args.wandb_project,
         group=config["log_name"],
         name=logdir.split("/")[-1],
-        mode="online",
+        mode=args.wandb_mode,
         config=wandb_config,
     )
 
+    metadata = {
+        "config": yaml.safe_load(open(args.config_file)),
+        "arguments": vars(args),
+        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "torch_version": torch.__version__,
+        "device": "cuda" if torch.cuda.is_available() and not args.no_gpu else "cpu",
+    }
+    with open(os.path.join(logdir, "experiment.json"), "w") as stream:
+        json.dump(metadata, stream, indent=2)
+    print(f"Experiment: {logdir}", flush=True)
     return Logger(os.path.join(logdir, "log.csv"))
 
 
@@ -190,12 +216,23 @@ def main():
     parser.add_argument("--wandb_entity", type=str, default=None)
     parser.add_argument("--wandb_project", type=str, default="hw3")
 
+    parser.add_argument("--wandb_mode", choices=["disabled", "offline", "online"], default="disabled")
+    parser.add_argument("--num_threads", type=int, default=1)
+    parser.add_argument("--total_steps", type=int, default=None)
+
     args = parser.parse_args()
+    torch.set_num_threads(args.num_threads)
 
     config = make_config(args.config_file)
+    if args.total_steps is not None:
+        config["total_steps"] = args.total_steps
     logger = make_logger(config, args)
 
-    run_training_loop(config, logger, args)
+    try:
+        run_training_loop(config, logger, args)
+    finally:
+        logger.close()
+        wandb.finish()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,22 @@
+[
+  {
+    "algorithm": "dqn",
+    "config": "experiments/dqn/mspacman.yaml"
+  },
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/halfcheetah.yaml"
+  },
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/halfcheetah_autotune.yaml"
+  },
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/hopper_singleq.yaml"
+  },
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/hopper_clipq.yaml"
+  }
+]

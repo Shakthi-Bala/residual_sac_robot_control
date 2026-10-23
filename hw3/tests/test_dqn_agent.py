@@ -56,6 +56,13 @@ class BasicDQNTest(unittest.TestCase):
         torch.testing.assert_close(self.agent.critic.bias, torch.tensor([1.36, 2.0]))
         self.assertTrue(all(p.grad is None for p in self.agent.target_critic.parameters()))
 
+    def test_double_q_selects_online_and_evaluates_target(self):
+        self.agent.use_double_q = True
+        with torch.no_grad():
+            self.agent.critic.bias.copy_(torch.tensor([5., 2.]))
+        stats = self.update(step=1)
+        self.assertAlmostEqual(stats['target_values'], (1 + .9 * 3 + 2) / 2, places=5)
+
     def test_target_copy_only_at_scheduled_step(self):
         self.update(step=1)
         torch.testing.assert_close(self.agent.target_critic.bias, torch.tensor([3.0, 4.0]))

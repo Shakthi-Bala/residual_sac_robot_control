@@ -9,3 +9,6 @@ dist/
 .ruff_cache/
 
 exp/
+
+# Slurm logs
+jobs/logs/

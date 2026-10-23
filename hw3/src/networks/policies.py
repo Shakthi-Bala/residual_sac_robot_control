@@ -59,7 +59,7 @@ class MLPPolicy(nn.Module):
                 )
 
                 if self.fixed_std:
-                    self.std = 0.1
+                    self.std = float(fixed_std)
                 else:
                     self.std = nn.Parameter(
                         torch.full((ac_dim,), 0.0, dtype=torch.float32, device=ptu.device)

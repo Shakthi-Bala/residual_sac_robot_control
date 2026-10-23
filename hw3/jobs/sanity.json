@@ -1,0 +1,10 @@
+[
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/sanity_invertedpendulum.yaml"
+  },
+  {
+    "algorithm": "sac",
+    "config": "experiments/sac/sanity_invertedpendulum_autotune.yaml"
+  }
+]

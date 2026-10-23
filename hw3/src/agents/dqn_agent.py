@@ -70,8 +70,7 @@ class DQNAgent(nn.Module):
             next_qa_values = self.target_critic(next_obs)
 
             if self.use_double_q:
-                # TODO(Section 2.5): implement double-Q target action selection
-                raise NotImplementedError("Double DQN is not implemented yet; see Section 2.5")
+                next_action = self.critic(next_obs).argmax(dim=-1)
             else:
                 next_action = next_qa_values.argmax(dim=-1)
 
