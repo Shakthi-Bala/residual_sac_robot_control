@@ -9,7 +9,7 @@ set -euo pipefail
 cd "${SLURM_SUBMIT_DIR}"
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
-export MUJOCO_GL=egl
+export MUJOCO_GL=disable
 export PYTHONUNBUFFERED=1
 if [[ -f ../.env ]]; then
     set -a
