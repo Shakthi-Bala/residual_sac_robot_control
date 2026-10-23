@@ -3,7 +3,6 @@ import time
 import yaml
 import argparse
 import json
-import subprocess
 import wandb
 
 from agents.sac_agent import SoftActorCritic
@@ -17,7 +16,7 @@ from infrastructure import pytorch_util as ptu
 import tqdm
 
 from infrastructure import utils
-from infrastructure.log_utils import Logger, setup_wandb, dump_log
+from infrastructure.log_utils import Logger, setup_wandb, dump_log, git_revision
 
 
 def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
@@ -189,7 +188,7 @@ def make_logger(config: dict, args: argparse.Namespace) -> Logger:
     metadata = {
         "config": yaml.safe_load(open(args.config_file)),
         "arguments": vars(args),
-        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "git_commit": git_revision(),
         "torch_version": torch.__version__,
         "device": "cuda" if torch.cuda.is_available() and not args.no_gpu else "cpu",
     }

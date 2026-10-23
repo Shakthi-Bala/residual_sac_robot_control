@@ -1,7 +1,6 @@
 import time
 import argparse
 import json
-import subprocess
 import wandb
 import yaml
 import os
@@ -16,7 +15,7 @@ from infrastructure import pytorch_util as ptu
 import tqdm
 
 from infrastructure import utils
-from infrastructure.log_utils import Logger, setup_wandb, dump_log
+from infrastructure.log_utils import Logger, setup_wandb, dump_log, git_revision
 from infrastructure.replay_buffer import MemoryEfficientReplayBuffer, ReplayBuffer
 
 MAX_NVIDEO = 2
@@ -235,7 +234,7 @@ def make_logger(config: dict, args: argparse.Namespace) -> Logger:
     metadata = {
         "config": yaml.safe_load(open(args.config_file)),
         "arguments": vars(args),
-        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+        "git_commit": git_revision(),
         "torch_version": torch.__version__,
         "device": "cuda" if torch.cuda.is_available() and not args.no_gpu else "cpu",
     }

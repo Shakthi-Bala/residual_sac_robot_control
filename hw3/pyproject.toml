@@ -27,3 +27,8 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[dependency-groups]
+report = [
+    "reportlab>=4.0,<5",
+]

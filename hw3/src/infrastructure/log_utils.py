@@ -3,6 +3,7 @@ import json
 import os
 import pickle
 import tempfile
+import subprocess
 from datetime import datetime
 
 import absl.flags as flags
@@ -212,3 +213,13 @@ def get_wandb_video(renders=None, n_cols=None, fps=15):
     renders = reshape_video(renders, n_cols)  # (t, c, nr * h, nc * w)
 
     return wandb.Video(renders, fps=fps, format='mp4')
+
+
+def git_revision():
+    revision = os.environ.get("HW3_GIT_COMMIT")
+    if revision:
+        return revision
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return "unavailable"
