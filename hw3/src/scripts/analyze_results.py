@@ -150,10 +150,16 @@ def summarize(runs):
             'final_eval_std': float(evaluation[-1]['Eval_StdReturn']),
             'best_eval_episode': max(float(r['Eval_MaxReturn']) for r in evaluation),
         }
+        q_values = [float(r['q_values']) for r in run['rows'] if r.get('q_values')]
+        if q_values:
+            summary[key]['final_q_values'] = q_values[-1]
+            summary[key]['peak_q_values'] = max(q_values)
         temperature = [float(r['temperature']) for r in run['rows'] if r.get('temperature')]
         if temperature:
             summary[key]['initial_logged_temperature'] = temperature[0]
             summary[key]['final_temperature'] = temperature[-1]
+            tail = temperature[-max(2, len(temperature) // 10):]
+            summary[key]['temperature_tail_range'] = [min(tail), max(tail)]
         columns = ['step', 'Eval_AverageReturn', 'Eval_StdReturn', 'Train_EpisodeReturn', 'q_values', 'temperature', 'entropy']
         with (curves / f'{name}.csv').open('w') as stream:
             writer = csv.DictWriter(stream, fieldnames=columns, extrasaction='ignore')

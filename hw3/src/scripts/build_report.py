@@ -28,7 +28,7 @@ def sections(summary):
             'Best means are maxima across evaluation checkpoints, not final performance or averages across seeds. Episode standard deviations describe episodes within one evaluation, not uncertainty across training seeds. Results are one-seed assignment experiments; they cannot establish statistical significance. The earlier unseeded-environment CartPole development run is excluded from the final comparisons.',
         ], None),
         ('2.4 Basic DQN: CartPole', [
-            'CartPole-v1: ' + result('dqn:CartPole-v1') + '.',
+            'CartPole-v1: ' + result('dqn:CartPole-v1') + f". The highest individual evaluation episode returned {summary['dqn:CartPole-v1']['best_eval_episode']:.0f}, against the assignment target of 500.",
             'The critic predicts one value per discrete action. Its target is r + gamma * (1 - terminal) * max_a Q_target(s_next, a). Gradients apply only to the online prediction for the recorded action. Time-limit truncations retain the bootstrap term. A separate target network prevents the supervised target from changing on every optimizer step.',
         ], 'cartpole'),
         ('2.5 Double DQN: LunarLander and MsPacman', [
@@ -50,14 +50,16 @@ def sections(summary):
         ], 'invertedpendulum'),
         ('3.4-3.5 HalfCheetah: fixed and learned temperature', [
             'Fixed temperature: ' + result('sac:HalfCheetah-v4') + '. Automatic temperature: ' + result('sac_autotune:HalfCheetah-v4') + '.',
-            f"The automatic run's final mean differs from the fixed run by {auto['final_eval_mean'] - fixed['final_eval_mean']:+.1f}; its best mean differs by {auto['best_eval_mean'] - fixed['best_eval_mean']:+.1f}. This comparison describes the observed run, not a statistically established improvement.",
+            f"Automatic tuning produced a {'higher' if auto['final_eval_mean'] > fixed['final_eval_mean'] else 'lower'} final evaluation mean in this run. Its final mean differs from the fixed run by {auto['final_eval_mean'] - fixed['final_eval_mean']:+.1f}; its best mean differs by {auto['best_eval_mean'] - fixed['best_eval_mean']:+.1f}. This comparison describes the observed run, not a statistically established improvement.",
             f"Temperature {direction} from the first logged value {auto['initial_logged_temperature']:.4f} to {auto['final_temperature']:.4f}. The implementation learns log(alpha), starts alpha at 0.1, and uses target entropy -6 for HalfCheetah's six actions. Its loss is -mean(log(alpha) * stop_gradient(log pi + target_entropy)).",
+            f"Across the final 10% of logged updates, temperature ranged from {auto['temperature_tail_range'][0]:.4f} to {auto['temperature_tail_range'][1]:.4f}; this interval shows whether adaptation was still changing substantially near the end.",
             'When sampled policy entropy exceeds the target, this update reduces temperature; when entropy is below target, it increases temperature. HalfCheetah can benefit from increasingly precise actions as useful locomotion is learned, while the constraint still discourages excessive loss of entropy. Temperature reflects the entropy residual and evolving policy, not return directly. A fixed value of 0.1 is already tuned in the starter, so automatic tuning need not outperform it.',
             'The optional fixed-temperature sweep was not run; the required fixed-versus-automatic comparison is shown below.',
         ], 'halfcheetah_temperature'),
         ('3.6 Hopper: single Q and clipped double Q', [
             'Single Q: ' + result('sac_singleq:Hopper-v4') + '. Clipped double Q: ' + result('sac_clipq:Hopper-v4') + '.',
             f"Clipped double Q changes the final mean by {clipped['final_eval_mean'] - single['final_eval_mean']:+.1f} and the best mean by {clipped['best_eval_mean'] - single['best_eval_mean']:+.1f} relative to single Q in these runs.",
+            f"Final logged mean Q-values were {single['final_q_values']:.1f} for single Q and {clipped['final_q_values']:.1f} for clipped double Q. Peak logged means were {single['peak_q_values']:.1f} and {clipped['peak_q_values']:.1f}, respectively. These measured scales should be read together with the return curves below.",
             'Taking the smaller of two target critics counters optimistic errors that can compound under bootstrapping. The lower panel plots the mean current Q-value on sampled replay batches. Comparing Q-values with learning stability helps diagnose overestimation, but these values are not a direct measurement of bias: they include entropy-related value, depend on the state distribution, and are not paired with ground-truth returns from identical state-action pairs.',
         ], 'hopper_critics'),
         ('Validation and reproducibility', [
