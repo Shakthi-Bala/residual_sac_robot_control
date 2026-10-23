@@ -1,0 +1,8 @@
+{
+  "run": "exp/HalfCheetah-v4_sac_autotune_sd1_20261023_061859",
+  "checkpoint": "best_agent.pt",
+  "seed": 10001,
+  "steps": 300,
+  "return": 2680.4602424110803,
+  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+}

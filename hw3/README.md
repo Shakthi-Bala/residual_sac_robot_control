@@ -1,6 +1,6 @@
 # HW3: Q-Learning and Actor-Critic Algorithms
 
-The runnable package for [the project](../README.md), based on Berkeley CS185/285 Spring 2026 HW3.
+The runnable package for [Deep RL Control Benchmarks](../README.md), based on Berkeley CS185/285 Spring 2026 HW3. See the [policy GIF gallery](results/media/README.md) for every trained configuration.
 
 ## Setup
 
@@ -37,9 +37,10 @@ Adjust the resource directives for your cluster. The GPU manifest requests one G
 
 ## Analysis and submission
 
-After all required runs finish:
+After all required runs finish, render the policy gallery with a working graphics backend:
 
 ```bash
+MUJOCO_GL=egl uv run src/scripts/render_gallery.py
 uv run --group report src/scripts/analyze_results.py
 uv run --group report src/scripts/build_report.py
 uv run src/scripts/package_submission.py
@@ -47,4 +48,4 @@ uv run src/scripts/package_submission.py
 
 The analysis requires complete runs and rejects nonfinite metrics. It saves the assignment plots, compact curves, and run provenance under `results/`. The report builder writes `results/report.pdf`, its Markdown source, and the project README. The submission builder validates the required logs and checkpoints, ZIP integrity, root layout, and the 100 MB cap.
 
-Submit `submit.zip` to HW3 Code and `results/report.pdf` to HW3 Report. The archive includes final checkpoints; separate best checkpoints are retained locally for visualizations. Raw run outputs and local secrets are excluded from Git.
+Submit `submit.zip` to HW3 Code and `results/report.pdf` to HW3 Report. The archive includes final checkpoints and the best checkpoints used for the policy GIFs. Raw run outputs and local secrets are excluded from Git.

@@ -1,0 +1,8 @@
+{
+  "run": "exp/LunarLander-v2_dqn_target2000_sd1_20261023_061759",
+  "checkpoint": "best_agent.pt",
+  "seed": 10001,
+  "steps": 220,
+  "return": 296.92056972696923,
+  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+}

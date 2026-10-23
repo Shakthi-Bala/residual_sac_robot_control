@@ -1,0 +1,8 @@
+{
+  "run": "exp/Hopper-v4_sac_singleq_sd1_20261023_061859",
+  "checkpoint": "best_agent.pt",
+  "seed": 10001,
+  "steps": 252,
+  "return": 882.8004598354345,
+  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+}

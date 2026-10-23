@@ -1,4 +1,4 @@
-# Deep Reinforcement Learning for Discrete and Continuous Control
+# Deep RL Control Benchmarks
 
 DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks. This project completes the Berkeley CS185/285 Spring 2026 HW3 starter and studies how target updates, entropy temperature, and critic ensembles affect learning.
 
@@ -24,9 +24,59 @@ All numbers below are means over 10 evaluation episodes from seed 1. Best means 
 
 ![Hopper critic comparison](hw3/results/hopper_critics.png)
 
-Policy rollouts: [CartPole](hw3/results/media/cartpole.gif), [LunarLander](hw3/results/media/lunarlander.gif), [Hopper](hw3/results/media/hopper.gif), and [MsPacman](hw3/results/media/mspacman.gif). Each is a separate best-checkpoint visualization, not an evaluation average.
-
 The [PDF report](hw3/results/report.pdf) covers all required experiments and their limitations. [Machine-readable results](hw3/results/summary.json) and [training curves](hw3/results/curves) preserve the measurements behind the figures. Additional plots cover [CartPole](hw3/results/cartpole.png), [LunarLander](hw3/results/lunarlander.png), [the target-update sweep](hw3/results/lunarlander_sweep.png), and [MsPacman training versus evaluation](hw3/results/mspacman.png).
+
+## Policy demonstrations
+
+Every trained configuration is shown below using its best checkpoint and visualization seed 10001. These individual rollouts illustrate behavior; evaluation averages are reported separately. Each GIF has a JSON file recording its checkpoint, seed, length, and return.
+
+### Discrete action control
+
+<table>
+<tr>
+<td width="33%"><strong>DQN · CartPole</strong><br><img src="hw3/results/media/cartpole.gif" width="250" alt="DQN · CartPole policy rollout"></td>
+<td width="33%"><strong>Double DQN · LunarLander</strong><br><img src="hw3/results/media/lunarlander.gif" width="250" alt="Double DQN · LunarLander policy rollout"></td>
+<td width="33%"><strong>Double DQN · MsPacman</strong><br><img src="hw3/results/media/mspacman.gif" width="250" alt="Double DQN · MsPacman policy rollout"></td>
+</tr>
+</table>
+
+### HalfCheetah: fixed versus learned temperature
+
+<table>
+<tr>
+<td width="50%"><strong>SAC · Fixed temperature</strong><br><img src="hw3/results/media/halfcheetah.gif" width="320" alt="SAC · Fixed temperature policy rollout"></td>
+<td width="50%"><strong>SAC · Learned temperature</strong><br><img src="hw3/results/media/halfcheetah_autotune.gif" width="320" alt="SAC · Learned temperature policy rollout"></td>
+</tr>
+</table>
+
+### Hopper: single versus clipped double Q
+
+<table>
+<tr>
+<td width="50%"><strong>Hopper · Single Q</strong><br><img src="hw3/results/media/hopper_singleq.gif" width="320" alt="Hopper · Single Q policy rollout"></td>
+<td width="50%"><strong>Hopper · Clipped double Q</strong><br><img src="hw3/results/media/hopper.gif" width="320" alt="Hopper · Clipped double Q policy rollout"></td>
+</tr>
+</table>
+
+<details>
+<summary>Sanity checks and target-update sweep — 5 additional GIFs</summary>
+
+<table>
+<tr>
+<td width="50%"><strong>Pendulum · Fixed temperature</strong><br><img src="hw3/results/media/invertedpendulum_fixed.gif" width="320" alt="Pendulum · Fixed temperature policy rollout"></td>
+<td width="50%"><strong>Pendulum · Learned temperature</strong><br><img src="hw3/results/media/invertedpendulum.gif" width="320" alt="Pendulum · Learned temperature policy rollout"></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="33%"><strong>LunarLander · Target period 250</strong><br><img src="hw3/results/media/lunarlander_target250.gif" width="250" alt="LunarLander · Target period 250 policy rollout"></td>
+<td width="33%"><strong>LunarLander · Target period 500</strong><br><img src="hw3/results/media/lunarlander_target500.gif" width="250" alt="LunarLander · Target period 500 policy rollout"></td>
+<td width="33%"><strong>LunarLander · Target period 2000</strong><br><img src="hw3/results/media/lunarlander_target2000.gif" width="250" alt="LunarLander · Target period 2000 policy rollout"></td>
+</tr>
+</table>
+
+</details>
 
 ## Implementation
 
@@ -36,7 +86,7 @@ The [PDF report](hw3/results/report.pdf) covers all required experiments and the
 - Single-critic and clipped double-critic backups, with numerical tests for gradient flow and update semantics.
 - Reproducible Slurm CPU/GPU jobs, explicit environment seeds, local logging, source-revision metadata, and best/final checkpoints.
 
-The [DQN agent](hw3/src/agents/dqn_agent.py) and [SAC agent](hw3/src/agents/sac_agent.py) contain the algorithm updates. Training entry points are in [scripts](hw3/src/scripts); [YAML configurations](hw3/experiments) specify the experiments. The current project covers model-free RL benchmarks; residual control and physical robot deployment have not been implemented.
+The [DQN agent](hw3/src/agents/dqn_agent.py) and [SAC agent](hw3/src/agents/sac_agent.py) contain the algorithm updates. Training entry points are in [scripts](hw3/src/scripts); [YAML configurations](hw3/experiments) specify the experiments. Experiments evaluate model-free agents in simulated control benchmarks.
 
 ## Run locally
 
@@ -72,6 +122,7 @@ Optional Discord notifications use `DISCORD_WEBHOOK` from a local `.env` in the 
 
 ```bash
 cd hw3
+MUJOCO_GL=egl uv run src/scripts/render_gallery.py
 uv run --group report src/scripts/analyze_results.py
 uv run --group report src/scripts/build_report.py
 uv run src/scripts/package_submission.py

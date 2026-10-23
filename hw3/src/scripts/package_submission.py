@@ -7,13 +7,14 @@ from scripts.analyze_results import load_runs
 def main():
     runs = load_runs()
     output = Path('submit.zip')
-    required = ('agent.pt', 'flags.json', 'log.csv', 'log.pkl', 'experiment.json')
+    required = ('agent.pt', 'best_agent.pt', 'flags.json', 'log.csv', 'log.pkl', 'experiment.json')
     files = [Path('README.md'), Path('pyproject.toml'), Path('uv.lock')]
     for directory in ('src', 'experiments', 'jobs', 'tests'):
         files.extend(p for p in Path(directory).rglob('*') if p.is_file() and '__pycache__' not in p.parts and 'logs' not in p.parts)
     files.extend([Path('results/report.pdf'), Path('results/report.md'), Path('results/summary.json')])
     files.extend(Path('results').glob('*.png'))
     files.extend(Path('results/curves').glob('*.csv'))
+    files.extend(p for p in Path('results/media').glob('*') if p.is_file())
     for run in runs.values():
         for name in required:
             path = run['folder'] / name
