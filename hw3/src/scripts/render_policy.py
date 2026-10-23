@@ -51,6 +51,12 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fps = env.metadata.get('render_fps', 30)
     imageio.mimsave(args.output, frames[::2], duration=2000 / fps, loop=0)
+    details = {
+        'run': str(args.run), 'checkpoint': 'best_agent.pt',
+        'seed': args.seed, 'steps': step + 1, 'return': float(total_reward),
+        'note': 'One best-checkpoint visualization rollout; not an evaluation average.',
+    }
+    args.output.with_suffix('.json').write_text(json.dumps(details, indent=2) + '\n')
     print(f'{args.output}: {step + 1} steps, return {total_reward:.1f}; best checkpoint, visualization seed {args.seed}')
 
 

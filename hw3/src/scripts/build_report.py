@@ -144,6 +144,9 @@ These commands require completed experiment logs in `hw3/exp/`. The report and s
 
 Based on [Berkeley Deep RL HW3, Spring 2026](https://github.com/berkeleydeeprlcourse/homework_spring2026/tree/main/hw3). Network, distribution, wrapper, and infrastructure scaffolding originate from that starter. This repository adds the missing algorithm updates, experiment execution, tests, analysis, and deliverables. It is a learning and evaluation project; results should be repeated across seeds before drawing research or deployment conclusions.
 '''
+    if Path('results/media/halfcheetah.gif').exists():
+        marker = '## Results'
+        text = text.replace(marker, '![HalfCheetah best-checkpoint rollout](hw3/results/media/halfcheetah.gif)\n\nBest-checkpoint visualization; quantitative results below use separate evaluation episodes.\n\n' + marker, 1)
     Path('../README.md').write_text(text)
 
 
