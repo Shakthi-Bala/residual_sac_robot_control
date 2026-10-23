@@ -1,0 +1,26 @@
+# Local Python environments and build outputs
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Experiment outputs and local tracking
+exp/
+wandb/
+videos/
+*.pt
+*.pth
+submit.zip
+
+# Local secrets and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
