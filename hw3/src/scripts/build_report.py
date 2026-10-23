@@ -102,6 +102,8 @@ All numbers below are means over 10 evaluation episodes from seed 1. Best means 
 
 ![Hopper critic comparison](hw3/results/hopper_critics.png)
 
+Policy rollouts: [CartPole](hw3/results/media/cartpole.gif), [LunarLander](hw3/results/media/lunarlander.gif), [Hopper](hw3/results/media/hopper.gif), and [MsPacman](hw3/results/media/mspacman.gif). Each is a separate best-checkpoint visualization, not an evaluation average.
+
 The [PDF report](hw3/results/report.pdf) covers all required experiments and their limitations. [Machine-readable results](hw3/results/summary.json) and [training curves](hw3/results/curves) preserve the measurements behind the figures. Additional plots cover [CartPole](hw3/results/cartpole.png), [LunarLander](hw3/results/lunarlander.png), [the target-update sweep](hw3/results/lunarlander_sweep.png), and [MsPacman training versus evaluation](hw3/results/mspacman.png).
 
 ## Implementation
