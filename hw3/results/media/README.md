@@ -30,8 +30,7 @@ Every trained configuration is shown below using its best checkpoint and visuali
 </tr>
 </table>
 
-<details>
-<summary>Sanity checks and target-update sweep — 5 additional GIFs</summary>
+### SAC sanity checks
 
 <table>
 <tr>
@@ -40,6 +39,8 @@ Every trained configuration is shown below using its best checkpoint and visuali
 </tr>
 </table>
 
+### LunarLander target-update sweep
+
 <table>
 <tr>
 <td width="33%"><strong>LunarLander · Target period 250</strong><br><img src="lunarlander_target250.gif" width="250" alt="LunarLander · Target period 250 policy rollout"></td>
@@ -47,5 +48,3 @@ Every trained configuration is shown below using its best checkpoint and visuali
 <td width="33%"><strong>LunarLander · Target period 2000</strong><br><img src="lunarlander_target2000.gif" width="250" alt="LunarLander · Target period 2000 policy rollout"></td>
 </tr>
 </table>
-
-</details>

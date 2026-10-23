@@ -2,30 +2,6 @@
 
 DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks. This project completes the Berkeley CS185/285 Spring 2026 HW3 starter and studies how target updates, entropy temperature, and critic ensembles affect learning.
 
-![HalfCheetah best-checkpoint rollout](hw3/results/media/halfcheetah.gif)
-
-Best-checkpoint visualization; quantitative results below use separate evaluation episodes.
-
-## Results
-
-All numbers below are means over 10 evaluation episodes from seed 1. Best means are selected across evaluation checkpoints; final means expose late-training regressions. These are single-seed experiments, not claims of statistical significance.
-
-| Environment | Method | Best mean return | Final mean return |
-| --- | --- | ---: | ---: |
-| CartPole-v1 | DQN | 409.8 | 409.8 |
-| LunarLander-v2 | Double DQN | 251.6 | 235.0 |
-| MsPacman | Double DQN | 2208.0 | 1169.0 |
-| HalfCheetah-v4 | SAC, fixed temperature | 11065.1 | 10996.8 |
-| HalfCheetah-v4 | SAC, learned temperature | 10250.2 | 10250.2 |
-| Hopper-v4 | SAC, single Q | 830.1 | 661.0 |
-| Hopper-v4 | SAC, clipped double Q | 1471.4 | 1029.4 |
-
-![HalfCheetah temperature comparison](hw3/results/halfcheetah_temperature.png)
-
-![Hopper critic comparison](hw3/results/hopper_critics.png)
-
-The [PDF report](hw3/results/report.pdf) covers all required experiments and their limitations. [Machine-readable results](hw3/results/summary.json) and [training curves](hw3/results/curves) preserve the measurements behind the figures. Additional plots cover [CartPole](hw3/results/cartpole.png), [LunarLander](hw3/results/lunarlander.png), [the target-update sweep](hw3/results/lunarlander_sweep.png), and [MsPacman training versus evaluation](hw3/results/mspacman.png).
-
 ## Policy demonstrations
 
 Every trained configuration is shown below using its best checkpoint and visualization seed 10001. These individual rollouts illustrate behavior; evaluation averages are reported separately. Each GIF has a JSON file recording its checkpoint, seed, length, and return.
@@ -58,8 +34,7 @@ Every trained configuration is shown below using its best checkpoint and visuali
 </tr>
 </table>
 
-<details>
-<summary>Sanity checks and target-update sweep — 5 additional GIFs</summary>
+### SAC sanity checks
 
 <table>
 <tr>
@@ -67,6 +42,8 @@ Every trained configuration is shown below using its best checkpoint and visuali
 <td width="50%"><strong>Pendulum · Learned temperature</strong><br><img src="hw3/results/media/invertedpendulum.gif" width="320" alt="Pendulum · Learned temperature policy rollout"></td>
 </tr>
 </table>
+
+### LunarLander target-update sweep
 
 <table>
 <tr>
@@ -76,7 +53,25 @@ Every trained configuration is shown below using its best checkpoint and visuali
 </tr>
 </table>
 
-</details>
+## Results
+
+All numbers below are means over 10 evaluation episodes from seed 1. Best means are selected across evaluation checkpoints; final means expose late-training regressions. These are single-seed experiments, not claims of statistical significance.
+
+| Environment | Method | Best mean return | Final mean return |
+| --- | --- | ---: | ---: |
+| CartPole-v1 | DQN | 409.8 | 409.8 |
+| LunarLander-v2 | Double DQN | 251.6 | 235.0 |
+| MsPacman | Double DQN | 2208.0 | 1169.0 |
+| HalfCheetah-v4 | SAC, fixed temperature | 11065.1 | 10996.8 |
+| HalfCheetah-v4 | SAC, learned temperature | 10250.2 | 10250.2 |
+| Hopper-v4 | SAC, single Q | 830.1 | 661.0 |
+| Hopper-v4 | SAC, clipped double Q | 1471.4 | 1029.4 |
+
+![HalfCheetah temperature comparison](hw3/results/halfcheetah_temperature.png)
+
+![Hopper critic comparison](hw3/results/hopper_critics.png)
+
+The [PDF report](hw3/results/report.pdf) covers all required experiments and their limitations. [Machine-readable results](hw3/results/summary.json) and [training curves](hw3/results/curves) preserve the measurements behind the figures. Additional plots cover [CartPole](hw3/results/cartpole.png), [LunarLander](hw3/results/lunarlander.png), [the target-update sweep](hw3/results/lunarlander_sweep.png), and [MsPacman training versus evaluation](hw3/results/mspacman.png).
 
 ## Implementation
 

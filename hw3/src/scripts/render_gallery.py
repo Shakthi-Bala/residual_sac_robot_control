@@ -44,10 +44,10 @@ def gallery_markdown(prefix='hw3/results/media/'):
     ]:
         lines.extend(['### ' + title, ''])
         cards(demos, columns)
-    lines.extend(['<details>', '<summary>Sanity checks and target-update sweep — 5 additional GIFs</summary>', ''])
+    lines.extend(['### SAC sanity checks', ''])
     cards(DEMOS[7:9], 2)
+    lines.extend(['### LunarLander target-update sweep', ''])
     cards(DEMOS[9:], 3)
-    lines.extend(['</details>', ''])
     return '\n'.join(lines)
 
 
