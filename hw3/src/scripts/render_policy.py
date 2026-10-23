@@ -39,7 +39,7 @@ def main():
     frames = []
     total_reward = 0.
     for step in range(args.max_steps):
-        frame = env.render()
+        frame = env.render(mode="rgb_array") if hasattr(env.unwrapped, "ale") else env.render()
         if isinstance(frame, list):
             frame = frame[-1]
         frames.append(frame)
@@ -49,7 +49,7 @@ def main():
             break
     env.close()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    fps = env.metadata.get('render_fps', 30)
+    fps = env.metadata.get('render_fps') or (15 if hasattr(env.unwrapped, 'ale') else 30)
     imageio.mimsave(args.output, frames[::2], duration=2000 / fps, loop=0)
     details = {
         'run': str(args.run), 'checkpoint': 'best_agent.pt',

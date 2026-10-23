@@ -1,0 +1,8 @@
+{
+  "run": "exp/MsPacman_dqn_sd1_20261023_061800",
+  "checkpoint": "best_agent.pt",
+  "seed": 10001,
+  "steps": 600,
+  "return": 630.0,
+  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+}
