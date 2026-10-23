@@ -12,6 +12,8 @@ def main():
     for directory in ('src', 'experiments', 'jobs', 'tests'):
         files.extend(p for p in Path(directory).rglob('*') if p.is_file() and '__pycache__' not in p.parts and 'logs' not in p.parts)
     files.extend([Path('results/report.pdf'), Path('results/report.md'), Path('results/summary.json')])
+    files.extend(Path('results').glob('*.png'))
+    files.extend(Path('results/curves').glob('*.csv'))
     for run in runs.values():
         for name in required:
             path = run['folder'] / name

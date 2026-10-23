@@ -20,7 +20,8 @@ def post_update(message, attachment=None):
             response = requests.post(webhook, data={'content': message}, files={'file': (Path(attachment).name, stream)}, timeout=30)
     else:
         response = requests.post(webhook, json={'content': message}, timeout=30)
-    response.raise_for_status()
+    if not response.ok:
+        raise RuntimeError(f'Discord returned HTTP {response.status_code}')
 
 
 def main():
