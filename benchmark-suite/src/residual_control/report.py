@@ -8,6 +8,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import torch
 
 from residual_control.artifacts import save_json
 from residual_control.env import ROOT
@@ -61,6 +62,8 @@ def learning_curves():
     records, curves = [], []
     archive = ROOT / 'results/learning'
     archive.mkdir(exist_ok=True)
+    policies = ROOT / 'results/policies'
+    policies.mkdir(exist_ok=True)
     for method in METHODS[1:]:
         frames = []
         for seed in [1, 2, 3]:
@@ -68,6 +71,10 @@ def learning_curves():
             metadata = json.loads((folder / 'metadata.json').read_text())
             if not metadata['complete']:
                 raise RuntimeError(f'Incomplete run: {folder}')
+            for checkpoint in ['best', 'final']:
+                state = torch.load(folder / f'{checkpoint}.pt', map_location='cpu', weights_only=True)
+                path = policies / f'{method}_seed{seed}_{checkpoint}.npz'
+                np.savez_compressed(path, **{key: value.cpu().numpy() for key, value in state.items()})
             curve = pd.read_csv(folder / 'validation.csv')
             curve['training_seed'], curve['method'] = seed, method
             frames.append(curve)
@@ -159,7 +166,7 @@ def markdown(overall, records):
               '- [Per-episode held-out results](results/episodes.csv), [condition summaries](results/summary.csv), and [per-seed aggregates](results/overall_per_seed.csv).',
               '- [Matched target comparisons](results/paired_comparisons.csv) and [worst residual cases](results/worst_residual_cases.csv).',
               '- [Training interaction thresholds](results/sample_efficiency.json), [validation histories](results/learning_curves.csv), and immutable run metadata in `results/learning/`.',
-              '- Model provenance and mesh license in `models/`; GIF provenance beside every animation.', '']
+              '- Portable selected and final model weights in `results/policies/` (NumPy arrays, no pickle); model provenance and mesh license in `models/`; GIF provenance beside every animation.', '']
     tuning = json.loads((ROOT / 'results/controller_tuning.json').read_text())
     total_training = sum(r['training_interactions'] for r in records)
     total_validation = sum(r['validation_interactions'] for r in records)

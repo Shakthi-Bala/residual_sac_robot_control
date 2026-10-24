@@ -14,11 +14,21 @@ from residual_control.protocol import rollout, test_cases
 
 def load_policy(method, seed, checkpoint='best'):
     folder = ROOT / 'runs/main' / f'{method}_seed{seed}'
-    metadata = json.loads((folder / 'metadata.json').read_text())
+    metadata_path = folder / 'metadata.json'
+    if not metadata_path.exists():
+        metadata_path = ROOT / 'results/learning' / f'{method}_seed{seed}.json'
+    metadata = json.loads(metadata_path.read_text())
     if not metadata['complete']:
         raise RuntimeError(f'Incomplete training: {folder}')
     agent = make_agent((87,), metadata['config'])
-    agent.load_state_dict(torch.load(folder / f'{checkpoint}.pt', map_location='cpu', weights_only=True))
+    weights = folder / f'{checkpoint}.pt'
+    if weights.exists():
+        state = torch.load(weights, map_location='cpu', weights_only=True)
+    else:
+        archive = ROOT / 'results/policies' / f'{method}_seed{seed}_{checkpoint}.npz'
+        with np.load(archive, allow_pickle=False) as arrays:
+            state = {key: torch.from_numpy(arrays[key].copy()) for key in arrays.files}
+    agent.load_state_dict(state)
     agent.eval()
     return agent, metadata
 

@@ -22,3 +22,8 @@ Matched simulation rollouts, shown side by side: **Cartesian PI · standalone SA
 
 ![UR16e held-out delay tracking](residual-control/results/media/ood_delay_tracking.gif)
 
+### Final training checkpoints: exposing regressions
+
+Final SAC weights after 100,000 interactions on the same 3 kg / 100 ms tracking case. These are distinct from the validation-selected checkpoints above; PI remains frozen.
+
+![UR16e final checkpoints, including learning regressions](residual-control/results/media/final_tracking.gif)
