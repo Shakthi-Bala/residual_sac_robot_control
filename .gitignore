@@ -28,3 +28,6 @@ submit.zip
 # Residual-control experiment outputs
 residual-control/runs/
 residual-control/jobs/logs/
+
+# Atomic GIF rendering outputs
+*.tmp.gif

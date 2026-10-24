@@ -14,10 +14,11 @@ class ArmRenderer:
         self.camera = mujoco.MjvCamera()
         mujoco.mjv_defaultCamera(self.camera)
         self.camera.lookat[:] = [.35, .05, .4]
-        self.camera.distance = 1.7
+        self.camera.distance = 1.15
         self.camera.azimuth = 135
-        self.camera.elevation = -25
+        self.camera.elevation = -15
         self.option = mujoco.MjvOption()
+        self.model.vis.headlight.ambient[:] = [.5, .5, .5]
         self.viewport = mujoco.MjrRect(0, 0, width, height)
         self.rgb = np.empty((height, width, 3), dtype=np.uint8)
 

@@ -4,6 +4,7 @@ from pathlib import Path
 import gym
 import mujoco
 import numpy as np
+import xml.etree.ElementTree as ET
 
 from residual_control.control import HOME, CommandDelay, Limits, cartesian_controller, compose_command, filter_command
 
@@ -26,13 +27,20 @@ class UR16eTrackingEnv(gym.Env):
     horizon = 250
     history_length = 9
 
-    def __init__(self, mode='residual', kp=4., ki=.5, assumed_payload=1., randomize=True):
+    def __init__(self, mode='residual', kp=4., ki=.5, assumed_payload=1., randomize=True, presentation=False):
         self.mode = mode
         self.kp, self.ki = kp, ki
         self.randomize = randomize
         self.limits = Limits()
         path = str(ROOT / 'models/ur16e.xml')
-        self.model = mujoco.MjModel.from_xml_path(path)
+        if presentation:
+            xml = ET.parse(path).getroot()
+            xml.find('compiler').set('meshdir', str(ROOT / 'models/assets'))
+            ET.SubElement(xml.find('asset'), 'texture', type='skybox', builtin='gradient',
+                          rgb1='.86 .89 .94', rgb2='.97 .98 1', width='512', height='512')
+            self.model = mujoco.MjModel.from_xml_string(ET.tostring(xml, encoding='unicode'))
+        else:
+            self.model = mujoco.MjModel.from_xml_path(path)
         self.nominal = mujoco.MjModel.from_xml_path(path)
         self.data = mujoco.MjData(self.model)
         self.nominal_data = mujoco.MjData(self.nominal)

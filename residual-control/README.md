@@ -6,6 +6,8 @@ The arm geometry, kinematics, and inertial parameters come from the UR16e model 
 
 [Concept guide: feedback control, SAC, hidden dynamics, and evaluation](CONCEPTS.md).
 
+The animated comparisons use a light card layout with per-frame position error; amber marks error at or above the 20 mm tolerance. Titles identify the checkpoint, task, payload, delay, and simulation time.
+
 ## Controllers
 
 - **Conventional:** damped-Jacobian Cartesian PI control with reference-velocity feedforward and a posture term. Gains and nominal payload compensation are selected on calibration targets, then frozen.
