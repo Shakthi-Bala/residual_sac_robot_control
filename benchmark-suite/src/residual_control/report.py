@@ -135,7 +135,7 @@ def paired_results(episodes):
 
 def markdown(overall, records):
     lines = ['## Simulation results', '',
-             'Best checkpoints were selected on validation targets before held-out evaluation. Each learned method has three training seeds; each policy is tested on 144 matched episodes. Values below average conditions and tasks equally. ± denotes descriptive training-seed SD, not a confidence interval. The conventional controller is deterministic and has no training-seed variation.', '',
+             'Best checkpoints were selected on validation targets before held-out evaluation. Each learned method has three training seeds; each policy is tested on 144 matched episodes. Values below average conditions and tasks equally; RMSE is the mean of episode RMSE values, rather than a pooled squared-error estimate. ± denotes descriptive training-seed SD, not a confidence interval. The conventional controller is deterministic and has no training-seed variation.', '',
              '| Method | Success | RMSE after 1 s | Final error | Command acceleration RMS | Failures |',
              '| --- | ---: | ---: | ---: | ---: | ---: |']
     totals = {}
@@ -174,7 +174,7 @@ def markdown(overall, records):
     evaluations = [json.loads(p.read_text()) for p in (ROOT / 'results/evaluation').glob('*.json')]
     total_test = sum(r['test_interactions'] for r in evaluations)
     lines += ['### Interaction accounting', '',
-              f"The controller grid used {tuning['calibration_interactions']:,} calibration interactions, shared by the conventional and residual methods. A separate 4,000-interaction baseline validation fixed the relative criterion. SAC used {total_training:,} training interactions across six runs and {total_validation:,} additional validation interactions, excluded from replay. Held-out evaluation used {total_test:,} interactions. Rendering replays are excluded from these learning counts. Controller calibration cost is not zero and is not charged once per residual seed.", '']
+              f"The controller grid used {tuning['calibration_interactions']:,} calibration interactions, shared by the conventional and residual methods. A separate 4,000-interaction baseline validation fixed the relative criterion. SAC used {total_training:,} training interactions across six runs and {total_validation:,} additional validation interactions, excluded from replay. Held-out evaluation used {total_test:,} interactions. Rendering replays are excluded from these learning counts. Controller calibration cost is not zero and is shared across residual seeds. Any claim about total data efficiency must include that cost; step-zero residual competence alone does not demonstrate cheaper learning.", '']
     result = '\n'.join(lines)
     (ROOT / 'results/results.md').write_text(result)
     root_summary = ['## Residual control study', '',
