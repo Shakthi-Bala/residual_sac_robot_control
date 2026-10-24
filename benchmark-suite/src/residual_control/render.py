@@ -51,17 +51,17 @@ def main():
                     observations[i], _, finished[i], _ = env.step(action)
             if step % 2:
                 continue
-            canvas = Image.new('RGB', (1440, 424), '#101b2d')
+            canvas = Image.new('RGB', (1440, 448), '#101b2d')
             draw = ImageDraw.Draw(canvas)
             for i, (env, label) in enumerate(zip(environments, labels)):
-                canvas.paste(Image.fromarray(env.render()), (480 * i, 40))
-                draw.text((480 * i + 16, 8), label, font=font(20), fill='white')
+                canvas.paste(Image.fromarray(env.render()), (480 * i, 60))
+                draw.text((480 * i + 16, 32), label, font=font(20), fill='white')
                 error = env.trace[-1]['error'] * 1000
                 state = ' | terminated' if env.failures else ''
-                draw.text((480 * i + 16, 402), f'error {error:.1f} mm{state}', font=font(14), fill='white')
-            draw.text((800, 12), f'{task} | +{payload:g} kg | {delay * 20} ms | {(step + 1) * .02:.2f} s',
+                draw.text((480 * i + 16, 426), f'error {error:.1f} mm{state}', font=font(14), fill='white')
+            draw.text((16, 6), f'{task} | +{payload:g} kg | {delay * 20} ms | {(step + 1) * .02:.2f} s',
                       font=font(16), fill='#a9d7ff')
-            frames.append(canvas.resize((1080, 318)))
+            frames.append(canvas.resize((1080, 336)))
         path = folder / f'{name}.gif'
         frames[0].save(path, save_all=True, append_images=frames[1:], duration=40, loop=0, optimize=False)
         save_json(path.with_suffix('.json'), {'target_seed': 20000, 'training_seed': args.seed,

@@ -161,7 +161,13 @@ These commands require completed experiment logs in `benchmark-suite/exp/`. The 
 
 Based on [Berkeley Deep RL HW3, Spring 2026](https://github.com/berkeleydeeprlcourse/homework_spring2026/tree/main/hw3). Network, distribution, wrapper, and infrastructure scaffolding originate from that starter. This repository adds the missing algorithm updates, experiment execution, tests, analysis, and deliverables. It is a learning and evaluation project; results should be repeated across seeds before drawing research or deployment conclusions.
 '''
-    text = text.replace('## Results', gallery_markdown() + '\n## Results', 1)
+    extension = Path('../residual-control/results')
+    extension_gallery = (extension / 'root_gallery.md').read_text() if (extension / 'root_gallery.md').exists() else ''
+    extension_summary = (extension / 'root_summary.md').read_text() if (extension / 'root_summary.md').exists() else ''
+    text = text.replace('## Results', extension_gallery + gallery_markdown() + '\n' + extension_summary + '\n## Results', 1)
+    if extension_gallery:
+        text = text.replace('DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks.',
+                            'Deep reinforcement learning for control, from DQN/SAC benchmarks to a simulation study of residual SAC on a six-joint UR16e arm.')
     Path('../README.md').write_text(text)
 
 

@@ -160,6 +160,13 @@ def markdown(overall, records):
               '- [Matched target comparisons](results/paired_comparisons.csv) and [worst residual cases](results/worst_residual_cases.csv).',
               '- [Training interaction thresholds](results/sample_efficiency.json), [validation histories](results/learning_curves.csv), and immutable run metadata in `results/learning/`.',
               '- Model provenance and mesh license in `models/`; GIF provenance beside every animation.', '']
+    tuning = json.loads((ROOT / 'results/controller_tuning.json').read_text())
+    total_training = sum(r['training_interactions'] for r in records)
+    total_validation = sum(r['validation_interactions'] for r in records)
+    evaluations = [json.loads(p.read_text()) for p in (ROOT / 'results/evaluation').glob('*.json')]
+    total_test = sum(r['test_interactions'] for r in evaluations)
+    lines += ['### Interaction accounting', '',
+              f"The controller grid used {tuning['calibration_interactions']:,} calibration interactions, shared by the conventional and residual methods. A separate 4,000-interaction baseline validation fixed the relative criterion. SAC used {total_training:,} training interactions across six runs and {total_validation:,} additional validation interactions, excluded from replay. Held-out evaluation used {total_test:,} interactions. Rendering replays are excluded from these learning counts. Controller calibration cost is not zero and is not charged once per residual seed.", '']
     result = '\n'.join(lines)
     (ROOT / 'results/results.md').write_text(result)
     save_json(ROOT / 'results/aggregate.json', {'metrics': totals, 'residual_rmse_improvement_percent': improvement})

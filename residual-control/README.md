@@ -38,3 +38,33 @@ After calibration finishes, `results/controller_tuning.json` freezes the selecte
 ## References
 
 The control decomposition follows [Johannink et al., Residual Reinforcement Learning for Robot Control](https://residualrl.github.io/). The SAC implementation builds on this repository's completed actor-critic implementation. [The BAIR real-robot SAC discussion](https://bair.berkeley.edu/blog/2018/12/14/sac/) motivates measuring sample use, command smoothness, and latency; this extension makes no real-robot claims.
+
+## Reproduce the full study
+
+From the repository root, after the frozen calibration files are present:
+
+```bash
+export PROJECT_REVISION=$(git rev-parse HEAD)
+for method in standalone residual; do
+  for seed in 1 2 3; do
+    sbatch --job-name="$method-$seed" residual-control/jobs/run.sbatch \
+      residual_control.train --method "$method" --seed "$seed"
+  done
+done
+```
+
+Each run refuses to overwrite a completed result. To repeat the study, move `residual-control/runs/main/` to a separate archive first. Once all six runs complete:
+
+```bash
+MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.evaluate --method controller
+for method in standalone residual; do
+  for seed in 1 2 3; do
+    MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.evaluate \
+      --method "$method" --seed "$seed"
+  done
+done
+MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.report
+MUJOCO_GL=egl benchmark-suite/.venv/bin/python -m residual_control.render
+```
+
+Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` renders without a display. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; large replay/checkpoint outputs stay in ignored `runs/` directories. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
