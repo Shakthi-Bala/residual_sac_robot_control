@@ -56,7 +56,7 @@ def main():
                 if not finished[i]:
                     action = agent.deterministic_action(observations[i]) if agent else np.zeros(6)
                     observations[i], _, finished[i], _ = env.step(action)
-            if step % 2:
+            if step % 5:
                 continue
             canvas = Image.new('RGB', (1440, 448), '#101b2d')
             draw = ImageDraw.Draw(canvas)
@@ -70,11 +70,11 @@ def main():
                       font=font(16), fill='#a9d7ff')
             frames.append(canvas.resize((1080, 336)))
         path = folder / f'{name}.gif'
-        frames[0].save(path, save_all=True, append_images=frames[1:], duration=40, loop=0, optimize=False)
+        frames[0].save(path, save_all=True, append_images=frames[1:], duration=100, loop=0, optimize=False)
         save_json(path.with_suffix('.json'), {'target_seed': 20000, 'training_seed': args.seed,
                   'selection': 'fixed seed 1 and target 20000; best validation or final checkpoint as labeled; not selected for test performance',
                   'checkpoint': checkpoint, 'checkpoint_steps': checkpoint_steps[checkpoint], 'task': task, 'condition': condition, 'payload_kg': payload, 'delay_ms': delay * 20,
-                  'playback': '25 fps, real time', 'metrics': {m: e.metrics() for m, e in zip(methods, environments)}})
+                  'playback': '10 fps, real time', 'metrics': {m: e.metrics() for m, e in zip(methods, environments)}})
         print(path, flush=True)
     for env in environments:
         env.close()
