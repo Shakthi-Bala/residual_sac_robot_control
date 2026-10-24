@@ -2,7 +2,8 @@
   "training": {"standalone_1": 2403952, "standalone_2": 2403953, "standalone_3": 2403954,
                "residual_1": 2403955, "residual_2": 2403956, "residual_3": 2403957},
   "evaluation": [2404002, 2404003, 2404004, 2404005, 2404006, 2404007, 2404008],
-  "render": 2404009,
+  "render_attempt": 2404009,
+  "render_note": "CPU node lacked EGL; GIF generation moved to an EGL-capable host. Render sbatch now requests a GPU.",
   "report": 2404010,
   "training_source_revision": "107964e",
   "scope": "simulation only; 100000 training interactions per run; 3 seeds per learned method"

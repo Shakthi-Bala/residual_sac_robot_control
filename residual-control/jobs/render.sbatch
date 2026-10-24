@@ -1,6 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=residual-gifs
 #SBATCH --partition=short
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:30:00

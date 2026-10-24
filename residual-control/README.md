@@ -69,7 +69,7 @@ MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.report
 MUJOCO_GL=egl benchmark-suite/.venv/bin/python -m residual_control.render
 ```
 
-Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` renders without a display. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; raw training outputs stay in ignored `runs/` directories. Portable selected and final weights are provided in `results/policies/`, so evaluation and rendering also work without those local run folders. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
+Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` requests one GPU for headless EGL rendering; the CPU compute nodes used here do not provide EGL libraries. Rendering also works directly on an EGL-capable host. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; raw training outputs stay in ignored `runs/` directories. Portable selected and final weights are provided in `results/policies/`, so evaluation and rendering also work without those local run folders. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
 
 ## Control path
 
