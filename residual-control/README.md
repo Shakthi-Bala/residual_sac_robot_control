@@ -68,3 +68,21 @@ MUJOCO_GL=egl benchmark-suite/.venv/bin/python -m residual_control.render
 ```
 
 Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` renders without a display. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; large replay/checkpoint outputs stay in ignored `runs/` directories. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
+
+## Control path
+
+```mermaid
+flowchart LR
+    O[Joint state, target error, command history] --> PI[Cartesian PI controller]
+    O --> SAC[SAC policy]
+    SAC --> B[Bound correction to ±0.2 rad/s]
+    PI --> SUM[Add commands]
+    B --> SUM
+    SUM --> F[Velocity, acceleration, joint filters]
+    F --> D[Command delay]
+    D --> V[Torque-limited velocity servo]
+    V --> P[UR16e dynamics with payload]
+    P --> O
+```
+
+Standalone SAC replaces the PI-plus-residual block; it shares the downstream servo and limits. The conventional baseline uses the PI block alone. All targets are generated before controller execution from the scenario seed.

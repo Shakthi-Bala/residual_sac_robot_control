@@ -2,6 +2,7 @@ import csv
 import json
 from pathlib import Path
 import shutil
+from xml.sax.saxutils import escape
 
 import matplotlib
 matplotlib.use('Agg')
@@ -182,6 +183,55 @@ def markdown(overall, records):
     readme.write_text(text + '\n\n<!-- GENERATED RESULTS -->\n\n' + result)
 
 
+def pdf_report():
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.lib.units import inch
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
+
+    styles = getSampleStyleSheet()
+    styles['BodyText'].fontSize = 10
+    styles['BodyText'].leading = 14
+    aggregate = json.loads((ROOT / 'results/aggregate.json').read_text())
+    story = [Paragraph('Residual SAC for Robust UR16e Control', styles['Title']),
+             Paragraph('Simulation study | Three training seeds | Matched held-out targets', styles['Heading2'])]
+    paragraphs = [
+        'Question: can a bounded SAC correction improve a tuned feedback controller under unknown payload and command delay, using fewer training interactions than SAC controlling the full outer loop?',
+        'The free-space UR16e model uses six joints, torque-limited velocity servos, 50 Hz outer control, and 2 ms physics steps. The Cartesian PI controller is calibrated on separate targets. SAC and residual SAC share observations, training budgets, networks, rewards, and command filters. Residual corrections are bounded to 0.2 rad/s per joint before final filtering.',
+        'Training randomizes added payload from 0 to 3 kg and delay from 0 to 100 ms. Tests include nominal, delay-only, payload-only, combined, 5 kg with delay, and 160 ms with load. Each policy faces 12 held-out target seeds for reaching and tracking in each condition. Validation selects checkpoints without test feedback.',
+        f"Residual SAC changes aggregate held-out RMSE by {aggregate['residual_rmse_improvement_percent']:+.1f}% relative to PI; positive means improvement. Initial zero-residual policies can inherit baseline competence. Validation-selected weights and final training weights are both preserved, and demonstration GIFs show both.",
+    ]
+    for paragraph in paragraphs:
+        story += [Paragraph(escape(paragraph), styles['BodyText']), Spacer(1, .12 * inch)]
+    table = [['Method', 'Success', 'RMSE (mm)', 'Final error (mm)', 'Failure']]
+    for method in METHODS:
+        row = aggregate['metrics'][method]
+        table.append([LABELS[method], f"{row['success'] * 100:.1f}%", f"{row['tracking_rmse_m'] * 1000:.1f}",
+                      f"{row['final_error_m'] * 1000:.1f}", f"{row['failure'] * 100:.1f}%"])
+    t = Table(table, repeatRows=1)
+    t.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#dbeafe')),
+                           ('BOTTOMPADDING', (0, 0), (-1, -1), 9),
+                           ('TOPPADDING', (0, 0), (-1, -1), 9)]))
+    story.append(t)
+    for title, image, caption in [
+        ('Held-out conditions', 'conditions.png', 'Bars average target episodes within each training seed, then across three seeds. Error bars are descriptive seed SD. PI is evaluated once. RMSE uses samples after the one-second approach; early failures are separately unsuccessful.'),
+        ('Learning and interaction use', 'learning.png', 'Validation is deterministic and excluded from replay. Initial residual actions are zero. Qualification requires two consecutive checkpoints; baseline-relative improvement additionally requires 10% lower RMSE without reduced success. Missing threshold crossings remain censored.'),
+        ('Paired comparisons and limits', 'paired.png', 'Positive values improve on PI for the same target trajectory and perturbation. Conditions beyond the training ranges test limited extrapolation. Three training seeds and one local workspace do not establish general superiority or statistical significance.'),
+    ]:
+        story += [PageBreak(), Paragraph(title, styles['Heading1']),
+                  Image(str(ROOT / 'results' / image), width=7 * inch, height=4.4 * inch if image == 'conditions.png' else 2.5 * inch),
+                  Paragraph(escape(caption), styles['BodyText']), Spacer(1, .15 * inch)]
+        if image == 'paired.png':
+            for text in [
+                'Limitations: contacts are disabled; this is not obstacle avoidance or a physical robot validation. The servo and payload inertias are simplified. Recent commands help with hidden delay but do not guarantee a Markov observation. Results depend on reward, initialization, controller tuning, target distribution, and budget.',
+                'Failure analysis: worst_residual_cases.csv lists the largest paired regressions. summary.csv records task/condition results, settled flags, capped settling times, issued-command acceleration, and unsuccessful episodes. The learning curves expose regressions masked by retaining an early validation checkpoint.',
+                'Reproduction: see residual-control/README.md, configs/experiment.yaml, results/learning/ metadata and CSV histories, and portable best/final weights in results/policies/. Mesh provenance and licensing are in models/. This study extends the repository SAC code; the actor objective uses the minimum of two critics.',
+            ]:
+                story += [Paragraph(escape(text), styles['BodyText']), Spacer(1, .12 * inch)]
+    SimpleDocTemplate(str(ROOT / 'results/report.pdf'), pagesize=(8.5 * inch, 11 * inch),
+                      rightMargin=.65 * inch, leftMargin=.65 * inch, title='Residual SAC for Robust UR16e Control').build(story)
+
+
 def main():
     expected = [ROOT / 'results/evaluation' / f'{m}_seed{s}.csv' for m in METHODS for s in ([0] if m == 'controller' else [1, 2, 3])]
     episodes = pd.concat([pd.read_csv(p) for p in expected], ignore_index=True)
@@ -193,6 +243,7 @@ def main():
     records = learning_curves()
     paired_results(episodes)
     markdown(overall, records)
+    pdf_report()
     print(ROOT / 'results/results.md')
 
 
