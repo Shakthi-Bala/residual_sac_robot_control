@@ -36,8 +36,12 @@ def main():
     methods = ['controller', 'standalone', 'residual']
     labels = ['Cartesian PI', 'Standalone SAC', 'Residual SAC']
     controller = json.loads((ROOT / 'results/controller_tuning.json').read_text())['selected']
-    policies = {checkpoint: [None] + [load_policy(method, args.seed, checkpoint)[0] for method in methods[1:]]
-                for checkpoint in ['best', 'final']}
+    loaded = {checkpoint: [load_policy(method, args.seed, checkpoint) for method in methods[1:]]
+              for checkpoint in ['best', 'final']}
+    policies = {checkpoint: [None] + [item[0] for item in entries] for checkpoint, entries in loaded.items()}
+    checkpoint_steps = {checkpoint: {method: item[1]['best_validation_step' if checkpoint == 'best' else 'training_interactions']
+                                    for method, item in zip(methods[1:], entries)}
+                        for checkpoint, entries in loaded.items()}
     environments = [UR16eTrackingEnv(method, **controller) for method in methods]
     folder = ROOT / 'results/media'
     folder.mkdir(parents=True, exist_ok=True)
@@ -69,7 +73,7 @@ def main():
         frames[0].save(path, save_all=True, append_images=frames[1:], duration=40, loop=0, optimize=False)
         save_json(path.with_suffix('.json'), {'target_seed': 20000, 'training_seed': args.seed,
                   'selection': 'fixed seed 1 and target 20000; best validation or final checkpoint as labeled; not selected for test performance',
-                  'checkpoint': checkpoint, 'task': task, 'condition': condition, 'payload_kg': payload, 'delay_ms': delay * 20,
+                  'checkpoint': checkpoint, 'checkpoint_steps': checkpoint_steps[checkpoint], 'task': task, 'condition': condition, 'payload_kg': payload, 'delay_ms': delay * 20,
                   'playback': '25 fps, real time', 'metrics': {m: e.metrics() for m, e in zip(methods, environments)}})
         print(path, flush=True)
     for env in environments:

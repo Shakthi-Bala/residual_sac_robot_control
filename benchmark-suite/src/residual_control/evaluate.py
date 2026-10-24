@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -59,7 +60,9 @@ def main():
         writer.writerows(rows)
     save_json(path.with_suffix('.json'), {'method': args.method, 'training_seed': args.seed,
               'checkpoint_step': metadata.get('best_validation_step'), 'training_revision': metadata.get('source_revision'),
-              'model_sha256': digest(ROOT / 'models/ur16e.xml'), 'test_interactions': sum(r['episode_steps'] for r in rows),
+              'model_sha256': digest(ROOT / 'models/ur16e.xml'),
+              'evaluation_source_sha256': digest(__file__),
+              'protocol_source_sha256': digest(Path(__file__).with_name('protocol.py')), 'test_interactions': sum(r['episode_steps'] for r in rows),
               'episodes': len(rows), 'selection': 'best validation checkpoint; test targets never select weights',
               'mean_metrics': {k: float(np.mean([r[k] for r in rows])) for k in
                                ('success', 'tracking_rmse_m', 'final_error_m', 'failure')}})
