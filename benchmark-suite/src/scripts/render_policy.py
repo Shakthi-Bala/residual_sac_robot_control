@@ -2,6 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
+import imageio.v2 as imageio
 import numpy as np
 import torch
 
@@ -10,7 +11,6 @@ from agents.sac_agent import SoftActorCritic
 from infrastructure import pytorch_util as ptu
 from scripts.run_dqn import make_config as make_dqn_config
 from scripts.run_sac import make_config as make_sac_config
-from scripts.gif_style import policy_frame
 
 
 def main():
@@ -50,17 +50,12 @@ def main():
     env.close()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fps = env.metadata.get('render_fps') or (15 if hasattr(env.unwrapped, 'ale') else 30)
+    imageio.mimsave(args.output, frames[::2], duration=2000 / fps, loop=0)
     details = {
         'run': str(args.run), 'checkpoint': 'best_agent.pt',
         'seed': args.seed, 'steps': step + 1, 'return': float(total_reward),
         'note': 'One best-checkpoint visualization rollout; not an evaluation average.',
     }
-    details['presentation'] = 'light comparison cards, navy header, full rollout return'
-    from scripts.render_gallery import DEMOS
-    label = next((row[2] for row in DEMOS if row[1] == args.output.stem), args.output.stem)
-    from PIL import Image
-    styled = [policy_frame(Image.fromarray(frame), label, details) for frame in frames[::2]]
-    styled[0].save(args.output, save_all=True, append_images=styled[1:], duration=round(2000 / fps / 10) * 10, loop=0)
     args.output.with_suffix('.json').write_text(json.dumps(details, indent=2) + '\n')
     print(f'{args.output}: {step + 1} steps, return {total_reward:.1f}; best checkpoint, visualization seed {args.seed}')
 
