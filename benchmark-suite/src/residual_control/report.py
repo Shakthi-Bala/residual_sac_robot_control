@@ -177,6 +177,13 @@ def markdown(overall, records):
               f"The controller grid used {tuning['calibration_interactions']:,} calibration interactions, shared by the conventional and residual methods. A separate 4,000-interaction baseline validation fixed the relative criterion. SAC used {total_training:,} training interactions across six runs and {total_validation:,} additional validation interactions, excluded from replay. Held-out evaluation used {total_test:,} interactions. Rendering replays are excluded from these learning counts. Controller calibration cost is not zero and is not charged once per residual seed.", '']
     result = '\n'.join(lines)
     (ROOT / 'results/results.md').write_text(result)
+    root_summary = ['## Residual control study', '',
+                    '**Question:** Can bounded residual SAC improve a tuned controller under hidden payload and delay?', '',
+                    'A simulation study on a six-joint UR16e compares Cartesian PI, standalone SAC, and residual SAC with three training seeds, equal budgets, and 1,008 matched held-out episodes.', '']
+    root_summary += lines[4:9]
+    root_summary += ['', f'Residual SAC changes aggregate RMSE by {improvement:+.1f}% relative to PI (positive means improvement). {stepzero}/3 residual seeds retain the initial zero-correction checkpoint. Retaining PI is not learned improvement.', '',
+                     '[Full protocol and results](residual-control/README.md) · [Report PDF](residual-control/results/report.pdf) · [Learning curves](residual-control/results/learning.png) · [Per-episode data](residual-control/results/episodes.csv)', '']
+    (ROOT / 'results/root_summary.md').write_text('\n'.join(root_summary))
     save_json(ROOT / 'results/aggregate.json', {'metrics': totals, 'residual_rmse_improvement_percent': improvement})
     readme = ROOT / 'README.md'
     text = readme.read_text().split('<!-- GENERATED RESULTS -->')[0].rstrip()

@@ -10,7 +10,7 @@ The arm geometry, kinematics, and inertial parameters come from the UR16e model 
 - **Standalone SAC:** predicts the entire outer-loop joint velocity command.
 - **Residual SAC:** adds a correction bounded to ±0.2 rad/s per joint to the frozen conventional command.
 
-All methods share the same low-level velocity servo, nominal gravity compensation, joint envelope, 0.7 rad/s velocity limit, and command acceleration filter. The residual is bounded before the combined command is filtered. Nonfinite policy actions fall back to the conventional controller. No robot connection or ROS2 node is included.
+Joint-envelope clipping takes priority over acceleration filtering near a bound; actual servo dynamics may still cross the envelope and terminate an episode. All methods share the same low-level velocity servo, nominal gravity compensation, joint envelope, 0.7 rad/s velocity limit, and command acceleration filter. The residual is bounded before the combined command is filtered. Nonfinite policy actions fall back to the conventional controller. No robot connection or ROS2 node is included.
 
 ## Experimental protocol
 
@@ -33,7 +33,7 @@ MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m unittest discover -s resid
 sbatch residual-control/jobs/run.sbatch residual_control.tune
 ```
 
-After calibration finishes, `results/controller_tuning.json` freezes the selected controller. Training jobs use `configs/experiment.yaml`. Rendering is a separate EGL process; training does not need graphics.
+After calibration finishes, `results/controller_tuning.json` freezes the selected controller and `results/baseline_validation.json` freezes its validation metrics and the improvement threshold. Training jobs use `configs/experiment.yaml`. Rendering is a separate EGL process; training does not need graphics.
 
 ## References
 
@@ -67,7 +67,7 @@ MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.report
 MUJOCO_GL=egl benchmark-suite/.venv/bin/python -m residual_control.render
 ```
 
-Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` renders without a display. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; large replay/checkpoint outputs stay in ignored `runs/` directories. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
+Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` renders without a display. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; raw training outputs stay in ignored `runs/` directories. Portable selected and final weights are provided in `results/policies/`, so evaluation and rendering also work without those local run folders. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
 
 ## Control path
 

@@ -5,7 +5,8 @@ from dataclasses import asdict
 import numpy as np
 
 from residual_control.env import ROOT, UR16eTrackingEnv
-from residual_control.protocol import calibration_cases, rollout
+from residual_control.protocol import calibration_cases, rollout, validation_cases
+from residual_control.artifacts import save_json
 
 
 def main():
@@ -29,6 +30,16 @@ def main():
         'selection_uses_test_set': False,
     }
     (ROOT / 'results/controller_tuning.json').write_text(json.dumps(output, indent=2) + '\n')
+    env = UR16eTrackingEnv('controller', **output['selected'])
+    validation = [rollout(env, case) for case in validation_cases()]
+    env.close()
+    mean = {k: float(np.mean([row[k] for row in validation])) for k in validation[0]}
+    save_json(ROOT / 'results/baseline_validation.json', {
+        'metrics': mean, 'validation_interactions': sum(row['episode_steps'] for row in validation),
+        'improvement_rmse_threshold_m': .9 * mean['tracking_rmse_m'],
+        'improvement_success_threshold': max(.8, mean['success']),
+        'definition': 'At least 10% RMSE reduction relative to the frozen baseline, without lower success; fixed before SAC training.',
+    })
     print('Selected:', output['selected'], flush=True)
 
 
