@@ -11,12 +11,13 @@
   "condition": "combined",
   "payload_kg": 3.0,
   "delay_ms": 100,
+  "presentation": "light comparison cards, navy headers, per-frame position error",
   "playback": "10 fps, real time",
   "metrics": {
     "controller": {
       "success": 1.0,
       "final_error_m": 0.004590098362522982,
-      "tracking_rmse_m": 0.00726444983996981,
+      "tracking_rmse_m": 0.007264449839969809,
       "settling_time_s": 1.0,
       "settled": 1.0,
       "command_acceleration_rms": 0.9197204971772198,
@@ -25,18 +26,18 @@
     },
     "standalone": {
       "success": 0.0,
-      "final_error_m": 0.03338647186538431,
-      "tracking_rmse_m": 0.032724365284967624,
+      "final_error_m": 0.03369951833738561,
+      "tracking_rmse_m": 0.03292574755164778,
       "settling_time_s": 5.0,
       "settled": 0.0,
-      "command_acceleration_rms": 2.7198982883155205,
+      "command_acceleration_rms": 2.6886340569267633,
       "failure": 0.0,
       "fallbacks": 0
     },
     "residual": {
       "success": 1.0,
       "final_error_m": 0.004590098362522982,
-      "tracking_rmse_m": 0.00726444983996981,
+      "tracking_rmse_m": 0.007264449839969809,
       "settling_time_s": 1.0,
       "settled": 1.0,
       "command_acceleration_rms": 0.9197204971772198,

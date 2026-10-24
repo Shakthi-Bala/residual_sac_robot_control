@@ -11,11 +11,12 @@
   "condition": "ood_payload",
   "payload_kg": 5.0,
   "delay_ms": 100,
+  "presentation": "light comparison cards, navy headers, per-frame position error",
   "playback": "10 fps, real time",
   "metrics": {
     "controller": {
       "success": 1.0,
-      "final_error_m": 0.00576007808596745,
+      "final_error_m": 0.005760078085967449,
       "tracking_rmse_m": 0.013401563628417986,
       "settling_time_s": 1.52,
       "settled": 1.0,
@@ -25,17 +26,17 @@
     },
     "standalone": {
       "success": 0.0,
-      "final_error_m": 0.04048556688385377,
-      "tracking_rmse_m": 0.03714756235261885,
+      "final_error_m": 0.04138170722708217,
+      "tracking_rmse_m": 0.03711740202246863,
       "settling_time_s": 5.0,
       "settled": 0.0,
-      "command_acceleration_rms": 2.689749340141657,
+      "command_acceleration_rms": 2.658163228081212,
       "failure": 0.0,
       "fallbacks": 0
     },
     "residual": {
       "success": 1.0,
-      "final_error_m": 0.00576007808596745,
+      "final_error_m": 0.005760078085967449,
       "tracking_rmse_m": 0.013401563628417986,
       "settling_time_s": 1.52,
       "settled": 1.0,

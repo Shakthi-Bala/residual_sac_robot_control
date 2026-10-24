@@ -11,6 +11,7 @@
   "condition": "nominal",
   "payload_kg": 0.0,
   "delay_ms": 0,
+  "presentation": "light comparison cards, navy headers, per-frame position error",
   "playback": "10 fps, real time",
   "metrics": {
     "controller": {
@@ -25,11 +26,11 @@
     },
     "standalone": {
       "success": 0.0,
-      "final_error_m": 0.01700282236294806,
-      "tracking_rmse_m": 0.02951758570497503,
-      "settling_time_s": 4.78,
+      "final_error_m": 0.016656470778114232,
+      "tracking_rmse_m": 0.028592804573139237,
+      "settling_time_s": 4.68,
       "settled": 1.0,
-      "command_acceleration_rms": 2.626789755481768,
+      "command_acceleration_rms": 2.612576451699087,
       "failure": 0.0,
       "fallbacks": 0
     },

@@ -4,5 +4,6 @@
   "seed": 10001,
   "steps": 235,
   "return": 245.9316837614565,
-  "note": "One best-checkpoint visualization rollout; not an evaluation average."
+  "note": "One best-checkpoint visualization rollout; not an evaluation average.",
+  "presentation": "light comparison cards, navy header, full rollout return"
 }

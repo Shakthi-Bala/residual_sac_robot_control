@@ -11,6 +11,7 @@
   "condition": "ood_delay",
   "payload_kg": 3.0,
   "delay_ms": 160,
+  "presentation": "light comparison cards, navy headers, per-frame position error",
   "playback": "10 fps, real time",
   "metrics": {
     "controller": {
@@ -25,11 +26,11 @@
     },
     "standalone": {
       "success": 0.0,
-      "final_error_m": 0.03163642154274226,
-      "tracking_rmse_m": 0.036082416566062904,
+      "final_error_m": 0.034842163708793374,
+      "tracking_rmse_m": 0.03637929183241499,
       "settling_time_s": 5.0,
       "settled": 0.0,
-      "command_acceleration_rms": 2.693318217809702,
+      "command_acceleration_rms": 2.7013928155297062,
       "failure": 0.0,
       "fallbacks": 0
     },
