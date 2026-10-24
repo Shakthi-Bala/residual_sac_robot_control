@@ -1,7 +1,36 @@
 # Deep RL Control Benchmarks
 
-DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks. This project completes the Berkeley CS185/285 Spring 2026 HW3 starter and studies how target updates, entropy temperature, and critic ensembles affect learning.
+Reinforcement learning for control, from DQN/SAC benchmarks to a simulation study of residual SAC on a six-joint UR16e arm. Includes a custom MuJoCo environment, bounded residual control, Slurm experiments, matched evaluation across training seeds, and documented failures.
 
+## UR16e: conventional control, SAC, and residual SAC
+
+Matched simulation rollouts, shown side by side: **Cartesian PI · standalone SAC · residual SAC**. Red marks the target. Each uses training seed 1 and target seed 20000, fixed before evaluating results; these are illustrations rather than averages. [Protocol, metrics, and limitations](residual-control/README.md).
+
+### Nominal reaching
+
+![UR16e nominal reaching: three matched controllers](residual-control/results/media/nominal_reach.gif)
+
+### Reaching with 3 kg added payload and 100 ms command delay
+
+![UR16e perturbed reaching](residual-control/results/media/combined_reach.gif)
+
+### Tracking with 3 kg added payload and 100 ms command delay
+
+![UR16e perturbed tracking](residual-control/results/media/combined_tracking.gif)
+
+### Tracking beyond the training payload range: 5 kg and 100 ms delay
+
+![UR16e held-out payload tracking](residual-control/results/media/ood_payload_tracking.gif)
+
+### Tracking beyond the training delay range: 3 kg and 160 ms delay
+
+![UR16e held-out delay tracking](residual-control/results/media/ood_delay_tracking.gif)
+
+### Final training checkpoints: exposing regressions
+
+Final SAC weights after 100,000 interactions on the same 3 kg / 100 ms tracking case. These are distinct from the validation-selected checkpoints above; PI remains frozen.
+
+![UR16e final checkpoints, including learning regressions](residual-control/results/media/final_tracking.gif)
 ## Policy demonstrations
 
 Every trained configuration is shown below using its best checkpoint and visualization seed 10001. These individual rollouts illustrate behavior; evaluation averages are reported separately. Each GIF has a JSON file recording its checkpoint, seed, length, and return.
@@ -52,6 +81,22 @@ Every trained configuration is shown below using its best checkpoint and visuali
 <td width="33%"><strong>LunarLander · Target period 2000</strong><br><img src="benchmark-suite/results/media/lunarlander_target2000.gif" width="250" alt="LunarLander · Target period 2000 policy rollout"></td>
 </tr>
 </table>
+
+## Residual control study
+
+**Question:** Can bounded residual SAC improve a tuned controller under hidden payload and delay?
+
+A simulation study on a six-joint UR16e compares Cartesian PI, standalone SAC, and residual SAC with three training seeds, equal budgets, and 1,008 matched held-out episodes.
+
+| Method | Success | RMSE after 1 s | Final error | Command acceleration RMS | Failures |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Cartesian PI | 89.6% | 11.2 mm | 7.1 mm | 0.7 rad/s² | 0.0% |
+| Standalone SAC | 9.0 ± 12.2% | 44.9 ± 14.1 mm | 66.9 ± 39.6 mm | 2.6 ± 0.0 rad/s² | 33.3 ± 23.6% |
+| Residual SAC | 89.8 ± 0.4% | 10.6 ± 1.1 mm | 7.9 ± 1.5 mm | 0.9 ± 0.3 rad/s² | 0.0 ± 0.0% |
+
+Residual SAC changes aggregate RMSE by +5.8% relative to PI (positive means improvement). 2/3 residual seeds retain the initial zero-correction checkpoint. Retaining PI is not learned improvement.
+
+[Full protocol and results](residual-control/README.md) · [Report PDF](residual-control/results/report.pdf) · [Learning curves](residual-control/results/learning.png) · [Per-episode data](residual-control/results/episodes.csv)
 
 ## Results
 

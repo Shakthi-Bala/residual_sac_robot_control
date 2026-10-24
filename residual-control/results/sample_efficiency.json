@@ -1,0 +1,62 @@
+[
+  {
+    "method": "standalone",
+    "seed": 1,
+    "training_interactions": 100000,
+    "validation_interactions": 33327,
+    "best_validation_step": 100000,
+    "threshold_interactions": null,
+    "improvement_interactions": null,
+    "wall_seconds": 757.0140661350451
+  },
+  {
+    "method": "standalone",
+    "seed": 2,
+    "training_interactions": 100000,
+    "validation_interactions": 31826,
+    "best_validation_step": 100000,
+    "threshold_interactions": null,
+    "improvement_interactions": null,
+    "wall_seconds": 1008.7126763612032
+  },
+  {
+    "method": "standalone",
+    "seed": 3,
+    "training_interactions": 100000,
+    "validation_interactions": 31296,
+    "best_validation_step": 100000,
+    "threshold_interactions": null,
+    "improvement_interactions": null,
+    "wall_seconds": 706.381913905032
+  },
+  {
+    "method": "residual",
+    "seed": 1,
+    "training_interactions": 100000,
+    "validation_interactions": 44000,
+    "best_validation_step": 0,
+    "threshold_interactions": 100000,
+    "improvement_interactions": null,
+    "wall_seconds": 756.955979897175
+  },
+  {
+    "method": "residual",
+    "seed": 2,
+    "training_interactions": 100000,
+    "validation_interactions": 44000,
+    "best_validation_step": 90000,
+    "threshold_interactions": 40000,
+    "improvement_interactions": null,
+    "wall_seconds": 762.7723822500557
+  },
+  {
+    "method": "residual",
+    "seed": 3,
+    "training_interactions": 100000,
+    "validation_interactions": 44000,
+    "best_validation_step": 0,
+    "threshold_interactions": 100000,
+    "improvement_interactions": null,
+    "wall_seconds": 728.0029228720814
+  }
+]

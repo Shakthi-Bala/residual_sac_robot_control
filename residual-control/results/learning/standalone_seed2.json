@@ -1,0 +1,174 @@
+{
+  "method": "standalone",
+  "seed": 2,
+  "config": {
+    "training_steps": 100000,
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "methods": [
+      "standalone",
+      "residual"
+    ],
+    "random_steps": 1000,
+    "learning_starts": 2000,
+    "batch_size": 128,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "learning_rate": 0.0003,
+    "temperature": 0.02,
+    "auto_tune_temperature": true,
+    "validation_interval": 10000,
+    "reach_only_steps": 20000,
+    "tracking_rmse_threshold_m": 0.01,
+    "success_threshold": 0.8,
+    "threshold_consecutive_evaluations": 2,
+    "training_payload_kg": [
+      0.0,
+      3.0
+    ],
+    "training_delay_steps": [
+      0,
+      5
+    ],
+    "held_out_target_seeds": [
+      20000,
+      20011
+    ]
+  },
+  "controller": {
+    "kp": 6.0,
+    "ki": 1.0,
+    "assumed_payload": 1.5
+  },
+  "source_revision": "107964e6a626d51d11d5fad8b21653327826961c",
+  "model_sha256": "7efd597d6295efa44bed43c7d265b08eb0f0ddbc277f166b31fd11c06d737a02",
+  "validation_cases": [
+    {
+      "seed": 10000,
+      "task": "reach",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10000,
+      "task": "reach",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10000,
+      "task": "tracking",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10000,
+      "task": "tracking",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10001,
+      "task": "reach",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10001,
+      "task": "reach",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10001,
+      "task": "tracking",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10001,
+      "task": "tracking",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10002,
+      "task": "reach",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10002,
+      "task": "reach",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10002,
+      "task": "tracking",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10002,
+      "task": "tracking",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10003,
+      "task": "reach",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10003,
+      "task": "reach",
+      "payload": 2.5,
+      "delay": 4
+    },
+    {
+      "seed": 10003,
+      "task": "tracking",
+      "payload": 0.5,
+      "delay": 1
+    },
+    {
+      "seed": 10003,
+      "task": "tracking",
+      "payload": 2.5,
+      "delay": 4
+    }
+  ],
+  "device": "cpu",
+  "improvement_criterion": {
+    "metrics": {
+      "success": 1.0,
+      "final_error_m": 0.004225490604375851,
+      "tracking_rmse_m": 0.006304292626898687,
+      "settling_time_s": 0.5575000000000001,
+      "settled": 1.0,
+      "command_acceleration_rms": 0.5796616659391984,
+      "failure": 0.0,
+      "fallbacks": 0.0,
+      "episode_return": -14.384128335376419,
+      "episode_steps": 250.0
+    },
+    "validation_interactions": 4000,
+    "improvement_rmse_threshold_m": 0.005673863364208819,
+    "improvement_success_threshold": 1.0,
+    "definition": "At least 10% RMSE reduction relative to the frozen baseline, without lower success; fixed before SAC training."
+  },
+  "evaluation_policy": "tanh of Gaussian mean",
+  "torch_version": "2.10.0+cu128",
+  "training_interactions": 100000,
+  "validation_interactions": 31826,
+  "complete": true,
+  "wall_seconds": 1008.7126763612032,
+  "best_validation_step": 100000,
+  "threshold_interactions": null,
+  "improvement_interactions": null
+}

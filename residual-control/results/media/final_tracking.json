@@ -1,0 +1,47 @@
+{
+  "target_seed": 20000,
+  "training_seed": 1,
+  "selection": "fixed seed 1 and target 20000; best validation or final checkpoint as labeled; not selected for test performance",
+  "checkpoint": "final",
+  "checkpoint_steps": {
+    "standalone": 100000,
+    "residual": 100000
+  },
+  "task": "tracking",
+  "condition": "combined",
+  "payload_kg": 3.0,
+  "delay_ms": 100,
+  "playback": "10 fps, real time",
+  "metrics": {
+    "controller": {
+      "success": 1.0,
+      "final_error_m": 0.004590098362522982,
+      "tracking_rmse_m": 0.00726444983996981,
+      "settling_time_s": 1.0,
+      "settled": 1.0,
+      "command_acceleration_rms": 0.9197204971772198,
+      "failure": 0.0,
+      "fallbacks": 0
+    },
+    "standalone": {
+      "success": 0.0,
+      "final_error_m": 0.03338647186538431,
+      "tracking_rmse_m": 0.032724365284967624,
+      "settling_time_s": 5.0,
+      "settled": 0.0,
+      "command_acceleration_rms": 2.7198982883155205,
+      "failure": 0.0,
+      "fallbacks": 0
+    },
+    "residual": {
+      "success": 1.0,
+      "final_error_m": 0.004480560514413409,
+      "tracking_rmse_m": 0.01102678634244881,
+      "settling_time_s": 0.78,
+      "settled": 1.0,
+      "command_acceleration_rms": 0.9916649170019453,
+      "failure": 0.0,
+      "fallbacks": 0
+    }
+  }
+}

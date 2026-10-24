@@ -1,0 +1,32 @@
+{
+  "metrics": {
+    "controller": {
+      "success": 0.8958333333333334,
+      "final_error_m": 0.007054894774309729,
+      "tracking_rmse_m": 0.011217053314689435,
+      "settling_time_s": 1.0975,
+      "settled": 0.9930555555555556,
+      "command_acceleration_rms": 0.6661448525686773,
+      "failure": 0.0
+    },
+    "standalone": {
+      "success": 0.09027777777777778,
+      "final_error_m": 0.0668995728583303,
+      "tracking_rmse_m": 0.04485476299762297,
+      "settling_time_s": 4.760740740740741,
+      "settled": 0.16203703703703703,
+      "command_acceleration_rms": 2.6316919737152964,
+      "failure": 0.3333333333333333
+    },
+    "residual": {
+      "success": 0.8981481481481483,
+      "final_error_m": 0.007906775879983586,
+      "tracking_rmse_m": 0.010561543281004318,
+      "settling_time_s": 1.171296296296296,
+      "settled": 0.9699074074074074,
+      "command_acceleration_rms": 0.8653505205758525,
+      "failure": 0.0
+    }
+  },
+  "residual_rmse_improvement_percent": 5.843870179583487
+}

@@ -1,0 +1,18 @@
+{
+  "method": "residual",
+  "training_seed": 3,
+  "checkpoint_step": 0,
+  "training_revision": "107964e6a626d51d11d5fad8b21653327826961c",
+  "model_sha256": "7efd597d6295efa44bed43c7d265b08eb0f0ddbc277f166b31fd11c06d737a02",
+  "evaluation_source_sha256": "6f5bf4bfd2b7ba2d877acfe266c4bdc83274247027cbdd03f658054cf2acb891",
+  "protocol_source_sha256": "2cae8ac3bd9901599c25bd664db29554dd606727c0da89e4cb9ee08bdd188803",
+  "test_interactions": 36000,
+  "episodes": 144,
+  "selection": "best validation checkpoint; test targets never select weights",
+  "mean_metrics": {
+    "success": 0.8958333333333334,
+    "tracking_rmse_m": 0.011217053314689486,
+    "final_error_m": 0.007054894774309779,
+    "failure": 0.0
+  }
+}
