@@ -1,1 +1,3 @@
-"""Residual SAC experiments for simulated UR16e control."""
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3] / "residual-control"

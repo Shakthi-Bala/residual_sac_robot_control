@@ -57,7 +57,7 @@ for method in standalone residual; do
 done
 ```
 
-Each run refuses to overwrite a completed result. To repeat the study, move `residual-control/runs/main/` to a separate archive first. Once all six runs complete:
+Each run reserves a new output directory and refuses to overwrite existing results, including partial runs. To repeat the study, move `residual-control/runs/main/` to a separate archive first. Once all six runs complete:
 
 ```bash
 MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m residual_control.evaluate --method controller
@@ -72,6 +72,8 @@ MUJOCO_GL=egl benchmark-suite/.venv/bin/python -m residual_control.render
 ```
 
 Training and evaluation use CPU jobs because these networks are small and physics dominates. EGL is needed only for rendering. `jobs/render.sbatch` requests one GPU for headless EGL rendering; the CPU compute nodes used here do not provide EGL libraries. Rendering also works directly on an EGL-capable host. `results/learning/` preserves the configuration, source revision, model hash, checkpoint steps, and validation history for every run; raw training outputs stay in ignored `runs/` directories. Portable selected and final weights are provided in `results/policies/`, so evaluation and rendering also work without those local run folders. Test evaluation uses deterministic policies and never updates their parameters. The controller grid, selected gains, and baseline-relative threshold are committed before main training.
+
+The report can also be rebuilt entirely from the committed evaluation CSVs and archived learning histories, without local training folders. Policy loading checks that the robot model and frozen controller match the training metadata. Rendering uses a separate simulation-state copy so drawing a frame cannot affect the next physics step.
 
 ## Control path
 
