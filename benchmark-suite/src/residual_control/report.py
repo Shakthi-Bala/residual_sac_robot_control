@@ -1,6 +1,4 @@
-import csv
 import json
-from pathlib import Path
 import shutil
 from xml.sax.saxutils import escape
 
