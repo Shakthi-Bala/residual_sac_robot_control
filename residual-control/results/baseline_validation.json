@@ -1,0 +1,18 @@
+{
+  "metrics": {
+    "success": 1.0,
+    "final_error_m": 0.004225490604375851,
+    "tracking_rmse_m": 0.006304292626898687,
+    "settling_time_s": 0.5575000000000001,
+    "settled": 1.0,
+    "command_acceleration_rms": 0.5796616659391984,
+    "failure": 0.0,
+    "fallbacks": 0.0,
+    "episode_return": -14.384128335376419,
+    "episode_steps": 250.0
+  },
+  "validation_interactions": 4000,
+  "improvement_rmse_threshold_m": 0.005673863364208819,
+  "improvement_success_threshold": 1.0,
+  "definition": "At least 10% RMSE reduction relative to the frozen baseline, without lower success; fixed before SAC training."
+}

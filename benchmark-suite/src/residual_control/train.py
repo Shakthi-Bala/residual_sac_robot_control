@@ -34,6 +34,7 @@ def main():
     if args.smoke:
         config.update(training_steps=400, random_steps=50, learning_starts=100, validation_interval=200)
     controller = json.loads((ROOT / 'results/controller_tuning.json').read_text())['selected']
+    improvement = json.loads((ROOT / 'results/baseline_validation.json').read_text())
     folder = ROOT / 'runs' / ('smoke' if args.smoke else 'main') / f'{args.method}_seed{args.seed}'
     if (folder / 'complete.json').exists():
         raise RuntimeError(f'Completed run already exists: {folder}')
@@ -51,7 +52,7 @@ def main():
     metadata = {'method': args.method, 'seed': args.seed, 'config': config, 'controller': controller,
                 'source_revision': revision(), 'model_sha256': digest(ROOT / 'models/ur16e.xml'),
                 'validation_cases': [asdict(c) for c in validation_cases()], 'device': 'cpu',
-                'evaluation_policy': 'tanh of Gaussian mean', 'torch_version': torch.__version__,
+                'improvement_criterion': improvement, 'evaluation_policy': 'tanh of Gaussian mean', 'torch_version': torch.__version__,
                 'training_interactions': 0, 'validation_interactions': 0, 'complete': False}
     save_json(folder / 'metadata.json', metadata)
     val_file = (folder / 'validation.csv').open('w')
@@ -62,10 +63,12 @@ def main():
     best_step = 0
     threshold_step = None
     streak = 0
+    improvement_streak = 0
+    improvement_step = None
     began = time.monotonic()
 
     def evaluate(step):
-        nonlocal val_writer, best_score, best_step, threshold_step, streak
+        nonlocal val_writer, best_score, best_step, threshold_step, streak, improvement_streak, improvement_step
         metrics = validation(evaluation_env, agent)
         metadata['validation_interactions'] += int(round(metrics['episode_steps'] * len(validation_cases())))
         row = {'step': step, **metrics}
@@ -82,6 +85,10 @@ def main():
         streak = streak + 1 if passed else 0
         if streak >= config['threshold_consecutive_evaluations'] and threshold_step is None:
             threshold_step = step
+        improved = metrics['tracking_rmse_m'] <= improvement['improvement_rmse_threshold_m'] and metrics['success'] >= improvement['improvement_success_threshold']
+        improvement_streak = improvement_streak + 1 if improved else 0
+        if improvement_streak >= config['threshold_consecutive_evaluations'] and improvement_step is None:
+            improvement_step = step
         print(json.dumps({'validation': row, 'best_step': best_step}), flush=True)
 
     def reset(step):
@@ -115,7 +122,7 @@ def main():
             save_weights(folder / 'final.pt', agent.state_dict())
     metadata.update(training_interactions=config['training_steps'], complete=True,
                     wall_seconds=time.monotonic() - began, best_validation_step=best_step,
-                    threshold_interactions=threshold_step)
+                    threshold_interactions=threshold_step, improvement_interactions=improvement_step)
     save_json(folder / 'metadata.json', metadata)
     save_json(folder / 'complete.json', {'complete': True, 'training_steps': config['training_steps']})
     train_file.close(); val_file.close()

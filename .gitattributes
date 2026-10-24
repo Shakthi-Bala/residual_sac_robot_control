@@ -2,3 +2,6 @@
 *.png binary
 *.gif binary
 *.csv text eol=lf
+
+*.obj binary
+*.stl binary

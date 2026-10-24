@@ -22,7 +22,7 @@ Training randomizes payload between 0 and 3 kg and command delay between 0 and 1
 
 Calibration, checkpoint validation, and held-out test targets use disjoint seeds. Held-out scenarios cover nominal dynamics, delay only, payload only, their combination, 5 kg payload, and 160 ms delay. Those last two are outside the training randomization ranges. Every method is tested on the same initial states and reference trajectories.
 
-Success means maintaining less than 2 cm error over the last 0.5 seconds of a reach, or spending at least 90% of the post-approach tracking period within 2 cm. Failures count as unsuccessful. Learning-curve qualification requires validation RMSE ≤1 cm and success ≥80% at two consecutive evaluations. Missing crossings remain censored rather than being reported as success at the training budget. Conventional tuning interactions are reported separately; inherited baseline performance is distinguished from improvement learned by the residual.
+Success means maintaining less than 2 cm error over the last 0.5 seconds of a reach, or spending at least 90% of the post-approach tracking period within 2 cm. Failures count as unsuccessful. Learning-curve qualification requires validation RMSE ≤1 cm and success ≥80% at two consecutive evaluations. Missing crossings remain censored rather than being reported as success at the training budget. A second criterion, frozen before SAC training, requires a 10% RMSE reduction relative to the tuned baseline without lower validation success. This separates learned improvement from inherited baseline competence. Conventional tuning interactions are reported separately; inherited baseline performance is distinguished from improvement learned by the residual.
 
 ## Run
 
