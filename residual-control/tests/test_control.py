@@ -57,6 +57,23 @@ class ControlTest(unittest.TestCase):
         self.assertGreater(np.linalg.norm(a.data.qvel - b.data.qvel), .01)
         a.close(); b.close()
 
+    def test_perturbation_labels_are_hidden(self):
+        env = UR16eTrackingEnv('residual')
+        nominal = env.reset(scenario=Scenario(42, 'tracking', 0., 0))
+        perturbed = env.reset(scenario=Scenario(42, 'tracking', 5., 8))
+        np.testing.assert_array_equal(nominal, perturbed)
+        env.close()
+
+    def test_time_limit_is_truncation(self):
+        env = UR16eTrackingEnv('controller')
+        env.reset(scenario=Scenario(42))
+        env.horizon = 1
+        _, _, done, info = env.step(np.zeros(6))
+        self.assertTrue(done)
+        self.assertTrue(info['TimeLimit.truncated'])
+        self.assertFalse(info['failed'])
+        env.close()
+
     def test_target_splits_and_initial_actor(self):
         groups = [{s.seed for s in calibration_cases()}, {s.seed for s in validation_cases()}, {s.seed for _, s in test_cases()}]
         for i in range(3):

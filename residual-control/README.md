@@ -4,6 +4,8 @@ Simulation-only extension to the DQN/SAC benchmarks. The question is whether a b
 
 The arm geometry, kinematics, and inertial parameters come from the UR16e model in [the existing pick-and-place project](https://github.com/Shakthi-Bala/ur16e_bt_pick_place), converted from the official Universal Robots description. The six arm joints are retained; the gripper is replaced by a physical payload body. Mesh licensing and model changes are recorded under `models/`. Contacts are disabled: this is a free-space position-control benchmark, not collision avoidance, assembly, or a hardware validation.
 
+[Concept guide: feedback control, SAC, hidden dynamics, and evaluation](CONCEPTS.md).
+
 ## Controllers
 
 - **Conventional:** damped-Jacobian Cartesian PI control with reference-velocity feedforward and a posture term. Gains and nominal payload compensation are selected on calibration targets, then frozen.
