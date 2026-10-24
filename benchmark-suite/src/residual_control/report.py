@@ -112,8 +112,10 @@ def paired_results(episodes):
     paired = episodes[episodes.method != 'controller'].merge(base, on=keys, validate='many_to_one')
     paired['rmse_improvement_mm'] = (paired.baseline_rmse_m - paired.tracking_rmse_m) * 1000
     paired.to_csv(ROOT / 'results/paired_comparisons.csv', index=False, lineterminator='\n')
-    worst = paired[paired.method == 'residual'].sort_values('rmse_improvement_mm').head(20)
+    worst = paired[paired.method == 'residual'].sort_values(['rmse_improvement_mm', 'tracking_rmse_m'], ascending=[True, False]).head(20)
     worst.to_csv(ROOT / 'results/worst_residual_cases.csv', index=False, lineterminator='\n')
+    episodes[episodes.success < 1].sort_values('tracking_rmse_m', ascending=False).to_csv(
+        ROOT / 'results/unsuccessful_episodes.csv', index=False, lineterminator='\n')
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
     for ax, task in zip(axes, ['reach', 'tracking']):
         for i, method in enumerate(METHODS[1:]):
@@ -162,10 +164,10 @@ def markdown(overall, records):
               f'Residual SAC changes aggregate held-out RMSE by {improvement:+.1f}% relative to PI (positive means improvement). {stepzero}/3 residual runs select the initial zero-residual checkpoint. A step-zero selection means the controller was retained; it is not evidence that reinforcement learning improved it.', '',
               'The absolute criterion measures task competence, which residual SAC can inherit before any training. The stricter criterion requires at least 10% lower validation RMSE than the frozen PI controller with no loss of success, at two consecutive checkpoints. Crossings report the second checkpoint, when the pair is confirmed. Validation is sampled every 10,000 interactions, so crossing times have that resolution.', '',
               'A strong PI controller, local workspace, short episodes, and unnormalized observations can leave little headroom for residual learning. Entropy-driven corrections can also disrupt accurate feedback control. These experiments do not establish superiority across other workspaces, controller gains, training budgets, or reward choices. Checkpoint selection can retain PI even when late training regresses; the learning plots expose those regressions.', '',
-              'The aggregate includes out-of-distribution payload/delay conditions. Inspect `summary.csv` for each condition/task and `worst_residual_cases.csv` for the largest paired regressions, including unsuccessful episodes. RMSE uses samples at and after 1 second; final error is endpoint error. Settling time means first entry into 2 cm followed by staying there, capped at 5 seconds; `settled` records whether the cap is censoring. Command acceleration measures issued commands after filtering, not physical joint acceleration. Early failures use observed samples and are separately counted as unsuccessful.', '',
+              'The aggregate includes out-of-distribution payload/delay conditions. Inspect `summary.csv` for each condition/task and `worst_residual_cases.csv` for the weakest paired comparisons (ties ordered by error). `unsuccessful_episodes.csv` lists every missed target or terminal failure. If all selected residuals equal PI, paired differences are zero rather than learned gains. RMSE uses samples at and after 1 second; final error is endpoint error. Settling time means first entry into 2 cm followed by staying there, capped at 5 seconds; `settled` records whether the cap is censoring. Command acceleration measures issued commands after filtering, not physical joint acceleration. Early failures use observed samples and are separately counted as unsuccessful.', '',
               '### Artifacts', '',
               '- [Per-episode held-out results](results/episodes.csv), [condition summaries](results/summary.csv), and [per-seed aggregates](results/overall_per_seed.csv).',
-              '- [Matched target comparisons](results/paired_comparisons.csv) and [worst residual cases](results/worst_residual_cases.csv).',
+              '- [Matched target comparisons](results/paired_comparisons.csv), [worst residual cases](results/worst_residual_cases.csv), and [all unsuccessful episodes](results/unsuccessful_episodes.csv).',
               '- [Training interaction thresholds](results/sample_efficiency.json), [validation histories](results/learning_curves.csv), and immutable run metadata in `results/learning/`.',
               '- Portable selected and final model weights in `results/policies/` (NumPy arrays, no pickle); model provenance and mesh license in `models/`; GIF provenance beside every animation.', '']
     tuning = json.loads((ROOT / 'results/controller_tuning.json').read_text())
