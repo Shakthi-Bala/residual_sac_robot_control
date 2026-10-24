@@ -1,0 +1,12 @@
+{
+  "source_project": "https://github.com/Shakthi-Bala/ur16e_bt_pick_place",
+  "source_commit": "7569cedce12c4e84a84978386fbeb22fc2118844",
+  "upstream": "https://github.com/UniversalRobots/Universal_Robots_ROS2_Description",
+  "changes": [
+    "Six arm joints retained; gripper and camera removed.",
+    "Body gravity compensation removed.",
+    "Position actuators replaced by torque-limited motors.",
+    "Physical tool/payload body and target site added.",
+    "Contacts disabled for this free-space benchmark."
+  ]
+}

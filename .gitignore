@@ -24,3 +24,7 @@ submit.zip
 .DS_Store
 .idea/
 .vscode/
+
+# Residual-control experiment outputs
+residual-control/runs/
+residual-control/jobs/logs/

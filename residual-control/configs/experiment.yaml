@@ -1,0 +1,19 @@
+training_steps: 100000
+seeds: [1, 2, 3]
+methods: [standalone, residual]
+random_steps: 1000
+learning_starts: 2000
+batch_size: 128
+hidden_size: 128
+num_layers: 2
+learning_rate: 0.0003
+temperature: 0.02
+auto_tune_temperature: true
+validation_interval: 10000
+reach_only_steps: 20000
+tracking_rmse_threshold_m: 0.01
+success_threshold: 0.8
+threshold_consecutive_evaluations: 2
+training_payload_kg: [0.0, 3.0]
+training_delay_steps: [0, 5]
+held_out_target_seeds: [20000, 20011]
