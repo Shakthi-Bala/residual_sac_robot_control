@@ -166,8 +166,8 @@ Based on [Berkeley Deep RL HW3, Spring 2026](https://github.com/berkeleydeeprlco
     extension_summary = (extension / 'root_summary.md').read_text() if (extension / 'root_summary.md').exists() else ''
     text = text.replace('## Results', extension_gallery + gallery_markdown() + '\n' + extension_summary + '\n## Results', 1)
     if extension_gallery:
-        text = text.replace('DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks.',
-                            'Deep reinforcement learning for control, from DQN/SAC benchmarks to a simulation study of residual SAC on a six-joint UR16e arm.')
+        text = text.replace('DQN and Soft Actor-Critic implementations evaluated on Atari, LunarLander, and MuJoCo control tasks. This project completes the Berkeley CS185/285 Spring 2026 HW3 starter and studies how target updates, entropy temperature, and critic ensembles affect learning.',
+                            'Reinforcement learning for control, from DQN/SAC benchmarks to a simulation study of residual SAC on a six-joint UR16e arm. Includes a custom MuJoCo environment, bounded residual control, Slurm experiments, matched evaluation across training seeds, and documented failures.')
     Path('../README.md').write_text(text)
 
 
