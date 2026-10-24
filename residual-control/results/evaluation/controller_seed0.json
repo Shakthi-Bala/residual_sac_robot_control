@@ -1,0 +1,16 @@
+{
+  "method": "controller",
+  "training_seed": 0,
+  "checkpoint_step": null,
+  "training_revision": null,
+  "model_sha256": "7efd597d6295efa44bed43c7d265b08eb0f0ddbc277f166b31fd11c06d737a02",
+  "test_interactions": 36000,
+  "episodes": 144,
+  "selection": "best validation checkpoint; test targets never select weights",
+  "mean_metrics": {
+    "success": 0.8958333333333334,
+    "tracking_rmse_m": 0.011217053314689486,
+    "final_error_m": 0.007054894774309779,
+    "failure": 0.0
+  }
+}

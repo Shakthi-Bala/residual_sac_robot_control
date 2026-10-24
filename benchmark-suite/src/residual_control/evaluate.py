@@ -48,7 +48,7 @@ def main():
         writer.writeheader()
         writer.writerows(rows)
     save_json(path.with_suffix('.json'), {'method': args.method, 'training_seed': args.seed,
-              'checkpoint_step': metadata.get('best_step'), 'training_revision': metadata.get('source_revision'),
+              'checkpoint_step': metadata.get('best_validation_step'), 'training_revision': metadata.get('source_revision'),
               'model_sha256': digest(ROOT / 'models/ur16e.xml'), 'test_interactions': sum(r['episode_steps'] for r in rows),
               'episodes': len(rows), 'selection': 'best validation checkpoint; test targets never select weights',
               'mean_metrics': {k: float(np.mean([r[k] for r in rows])) for k in
