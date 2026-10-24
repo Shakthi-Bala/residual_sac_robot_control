@@ -31,5 +31,7 @@ where = ["src"]
 
 [dependency-groups]
 report = [
+    "pandas>=2.3,<3",
+    "pillow>=11,<12",
     "reportlab>=4.0,<5",
 ]

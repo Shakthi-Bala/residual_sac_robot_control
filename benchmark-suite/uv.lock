@@ -583,6 +583,8 @@ dependencies = [
 
 [package.dev-dependencies]
 report = [
+    { name = "pandas" },
+    { name = "pillow" },
     { name = "reportlab" },
 ]
 
@@ -603,7 +605,11 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-report = [{ name = "reportlab", specifier = ">=4.0,<5" }]
+report = [
+    { name = "pandas", specifier = ">=2.3,<3" },
+    { name = "pillow", specifier = ">=11,<12" },
+    { name = "reportlab", specifier = ">=4.0,<5" },
+]
 
 [[package]]
 name = "hyperframe"

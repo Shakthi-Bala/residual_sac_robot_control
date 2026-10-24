@@ -28,7 +28,7 @@ Success means maintaining less than 2 cm error over the last 0.5 seconds of a re
 
 ## Run
 
-Use the environment installed for `benchmark-suite/`; no additional runtime packages are required. From the repository root:
+Use the environment installed for `benchmark-suite/` (`cd benchmark-suite && uv sync --group report`). The report group includes tabular analysis and PDF dependencies. From the repository root:
 
 ```bash
 MUJOCO_GL=disable benchmark-suite/.venv/bin/python -m unittest discover -s residual-control/tests -v
